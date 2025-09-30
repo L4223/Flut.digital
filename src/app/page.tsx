@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <div className="container mx-auto">
+      <div className="container mx-auto px-4">
         <div className="space-y-24 md:space-y-32 py-24 md:py-32">
           <ServicesSection />
           <ProcessSection />
