@@ -76,7 +76,7 @@ const PointCloudAnimation = () => {
           const x = positions[i3 + 0];
           const z = positions[i3 + 2];
           
-          positions[i3 + 1] = Math.sin(x * 0.3 + elapsedTime) * 0.5 + Math.sin(z * 0.3 + elapsedTime) * 0.5;
+          positions[i3 + 1] = Math.sin(x * 0.3 + elapsedTime) * 0.75 + Math.sin(z * 0.3 + elapsedTime) * 0.75;
       }
       particles.geometry.attributes.position.needsUpdate = true;
 
