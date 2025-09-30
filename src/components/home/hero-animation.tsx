@@ -18,6 +18,9 @@ const PointCloudAnimation = () => {
     // Camera
     const camera = new THREE.PerspectiveCamera(75, currentMount.clientWidth / currentMount.clientHeight, 0.1, 1000);
     camera.position.z = 5;
+    camera.position.y = 2;
+    camera.rotation.x = -0.3;
+
 
     // Renderer
     let newRenderer: THREE.WebGLRenderer;
@@ -34,35 +37,51 @@ const PointCloudAnimation = () => {
 
     // Point Cloud Geometry
     const particlesGeometry = new THREE.BufferGeometry();
-    const particlesCnt = 5000;
-    const posArray = new Float32Array(particlesCnt * 3);
+    const count = 20000;
+    const positions = new Float32Array(count * 3);
+    const grid_size = 30;
 
-    for (let i = 0; i < particlesCnt * 3; i++) {
-        posArray[i] = (Math.random() - 0.5) * 10;
+    for(let i = 0; i < count * 3; i++) {
+        const i3 = i * 3;
+        positions[i3 + 0] = (Math.random() - 0.5) * grid_size; // x
+        positions[i3 + 1] = 0; // y
+        positions[i3 + 2] = (Math.random() - 0.5) * grid_size; // z
     }
-    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
     // Material
     const particlesMaterial = new THREE.PointsMaterial({
-        size: 0.015,
+        size: 0.03,
         color: new THREE.Color(0x1C91FF), // Primary color
         transparent: true,
-        opacity: 0.6,
+        opacity: 0.7,
         blending: THREE.AdditiveBlending,
     });
     
     // Points
-    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-    scene.add(particlesMesh);
+    const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particles);
 
     // Animation loop
-    let clock = new THREE.Clock();
+    const clock = new THREE.Clock();
     const animate = () => {
       const elapsedTime = clock.getElapsedTime();
       
-      // Animate particles
-      particlesMesh.rotation.y = elapsedTime * 0.1;
-      particlesMesh.rotation.x = elapsedTime * 0.05;
+      // Animate particles to form a wave
+      const positions = particles.geometry.attributes.position.array as Float32Array;
+
+      for(let i = 0; i < count; i++) {
+          const i3 = i * 3;
+          const x = positions[i3 + 0];
+          const z = positions[i3 + 2];
+          
+          positions[i3 + 1] = Math.sin(x * 0.3 + elapsedTime) * 0.5 + Math.sin(z * 0.3 + elapsedTime) * 0.5;
+      }
+      particles.geometry.attributes.position.needsUpdate = true;
+
+
+      particles.rotation.y = elapsedTime * 0.05;
       
       newRenderer.render(scene, camera);
       requestAnimationFrame(animate);
