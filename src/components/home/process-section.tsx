@@ -1,5 +1,5 @@
 import { Card } from "../ui/card";
-import { Lightbulb, Draft, Code, Rocket } from "lucide-react";
+import { Lightbulb, DraftingCompass, Code, Rocket } from "lucide-react";
 
 const processSteps = [
     {
@@ -10,7 +10,7 @@ const processSteps = [
     {
         title: "2. Design & Prototyping",
         description: "Kreative Konzeption und nutzerzentriertes UI/UX-Design, das Ihre Marke widerspiegelt.",
-        icon: Draft
+        icon: DraftingCompass
     },
     {
         title: "3. Entwicklung & Umsetzung",
