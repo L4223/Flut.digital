@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
-const WaveAnimation = () => {
+const PointCloudAnimation = () => {
   const mountRef = useRef<HTMLDivElement>(null);
   const [renderer, setRenderer] = useState<THREE.WebGLRenderer | null>(null);
 
@@ -32,49 +32,38 @@ const WaveAnimation = () => {
     newRenderer.setPixelRatio(window.devicePixelRatio);
     currentMount.appendChild(newRenderer.domElement);
 
-    // Wave geometry
-    const geometry = new THREE.PlaneGeometry(20, 10, 50, 50);
-    
-    // Material with shaders
-    const material = new THREE.ShaderMaterial({
-      uniforms: {
-        time: { value: 0 },
-        uColor1: { value: new THREE.Color(0x1C91FF) }, // Primary
-        uColor2: { value: new THREE.Color(0x40CFFF) }, // Accent
-      },
-      vertexShader: `
-        uniform float time;
-        varying vec2 vUv;
-        void main() {
-          vUv = uv;
-          vec3 pos = position;
-          pos.z += sin(pos.x * 0.5 + time) * 0.3;
-          pos.z += sin(pos.y * 0.5 + time) * 0.3;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform float time;
-        uniform vec3 uColor1;
-        uniform vec3 uColor2;
-        varying vec2 vUv;
-        void main() {
-            float strength = sin(vUv.x * 10.0 + time * 2.0) * 0.5 + 0.5;
-            vec3 color = mix(uColor1, uColor2, strength);
-            gl_FragColor = vec4(color, 0.4);
-        }
-      `,
-      wireframe: true,
-      transparent: true,
-    });
+    // Point Cloud Geometry
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particlesCnt = 5000;
+    const posArray = new Float32Array(particlesCnt * 3);
 
-    const wave = new THREE.Mesh(geometry, material);
-    scene.add(wave);
+    for (let i = 0; i < particlesCnt * 3; i++) {
+        posArray[i] = (Math.random() - 0.5) * 10;
+    }
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+    // Material
+    const particlesMaterial = new THREE.PointsMaterial({
+        size: 0.015,
+        color: new THREE.Color(0x1C91FF), // Primary color
+        transparent: true,
+        opacity: 0.6,
+        blending: THREE.AdditiveBlending,
+    });
+    
+    // Points
+    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particlesMesh);
 
     // Animation loop
     let clock = new THREE.Clock();
     const animate = () => {
-      material.uniforms.time.value = clock.getElapsedTime();
+      const elapsedTime = clock.getElapsedTime();
+      
+      // Animate particles
+      particlesMesh.rotation.y = elapsedTime * 0.1;
+      particlesMesh.rotation.x = elapsedTime * 0.05;
+      
       newRenderer.render(scene, camera);
       requestAnimationFrame(animate);
     };
@@ -95,9 +84,10 @@ const WaveAnimation = () => {
         currentMount.removeChild(newRenderer.domElement);
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <div ref={mountRef} className="absolute inset-0 z-0 opacity-40" />;
+  return <div ref={mountRef} className="absolute inset-0 z-0 opacity-70" />;
 };
 
-export default WaveAnimation;
+export default PointCloudAnimation;
