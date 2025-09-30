@@ -13,7 +13,7 @@ const CtaButton = React.forwardRef<HTMLButtonElement, CtaButtonProps>(
     return (
       <Comp
         className={cn(
-          "brand-gradient text-primary-foreground font-bold shadow-lg shadow-primary/20 transition-all duration-300 hover:shadow-xl hover:shadow-accent/30 hover:scale-105",
+          "p-2 brand-gradient text-primary-foreground font-bold shadow-lg shadow-primary/20 transition-all duration-300 hover:shadow-xl hover:shadow-accent/30 hover:scale-105",
           className
         )}
         ref={ref}

@@ -26,9 +26,8 @@ export default function Hero() {
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <CtaButton asChild size="lg">
-                            <Link href="/kontakt">
-                                Projekt starten
-                                <ArrowRight className="ml-2"/>
+                            <Link href="/kontakt" className="flex items-center">
+                                Projekt starten <ArrowRight className="ml-2"/>
                             </Link>
                         </CtaButton>
                         <Link href="/leistungen" className="font-semibold hover:text-primary transition-colors">
