@@ -18,15 +18,15 @@ export default function Hero() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeInOut" }}
                 >
-                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter mb-6 text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground">
+                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter mb-10 text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground leading-tight md:leading-tight lg:leading-tight">
                         Digitale Lösungen,<br />die begeistern.
                     </h1>
                     <p className="max-w-xl md:max-w-2xl mx-auto text-base md:text-xl text-muted-foreground mb-10">
                         Wir sind Ihre Digitalagentur für anspruchsvolles Webdesign, zukunftsweisende KI-Integrationen und immersive 3D/AR-Erlebnisse.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <CtaButton asChild size="lg">
-                            <Link href="/kontakt" className="flex items-center">
+                        <CtaButton asChild size="lg" className="flex-shrink-0">
+                            <Link href="/kontakt" className="flex items-center whitespace-nowrap">
                                 Projekt starten <ArrowRight className="ml-2"/>
                             </Link>
                         </CtaButton>
