@@ -22,6 +22,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { Code } from "lucide-react";
 import { siteConfig } from "@/config/site";
+import Link from "next/link";
 
 const formSchema = z.object({
   email: z.string().email("Bitte eine gültige E-Mail eingeben."),
