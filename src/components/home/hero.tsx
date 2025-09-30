@@ -8,7 +8,7 @@ import { ArrowRight } from "lucide-react";
 
 export default function Hero() {
     return (
-        <section className="relative h-[80vh] min-h-[500px] md:h-screen flex items-center justify-center text-center overflow-hidden">
+        <section className="relative w-full h-[80vh] min-h-[500px] md:h-screen flex items-center justify-center text-center overflow-hidden">
             <WaveAnimation />
             <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background to-background" />
             
