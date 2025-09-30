@@ -16,6 +16,7 @@ export default function RootLayout({
 }>) {
   const pathname = usePathname();
   const isAdminPage = pathname.startsWith('/admin');
+  const isLoginPage = pathname === '/login';
 
   useEffect(() => {
     // This is a one-time migration script.
@@ -23,7 +24,7 @@ export default function RootLayout({
     migrateBlogPostsToFirestore();
   }, []);
 
-  if (isAdminPage) {
+  if (isAdminPage || isLoginPage) {
     return (
       <html lang="de" className="h-full bg-muted/40">
         <head>
@@ -56,4 +57,3 @@ export default function RootLayout({
     </html>
   );
 }
-
