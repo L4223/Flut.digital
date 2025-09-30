@@ -1,3 +1,7 @@
+
+import { collection, getDocs, writeBatch, doc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+
 export type BlogPost = {
     slug: string;
     title: string;
@@ -37,3 +41,22 @@ export const blogPosts: BlogPost[] = [
     imageHint: "augmented reality"
   },
 ];
+
+// Function to migrate local blog posts to Firestore
+export async function migrateBlogPostsToFirestore() {
+  const postsCollection = collection(db, 'blogPosts');
+  const snapshot = await getDocs(postsCollection);
+  
+  if (snapshot.empty) {
+    console.log('Migrating blog posts to Firestore...');
+    const batch = writeBatch(db);
+    blogPosts.forEach(post => {
+      const docRef = doc(postsCollection);
+      batch.set(docRef, post);
+    });
+    await batch.commit();
+    console.log('Migration complete!');
+  } else {
+    console.log('Blog posts already exist in Firestore. No migration needed.');
+  }
+}

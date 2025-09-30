@@ -1,10 +1,26 @@
+
+"use client"
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { blogPosts } from "@/config/blog";
+import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { BlogPost } from "@/config/blog";
 
 export default function BlogPage() {
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const querySnapshot = await getDocs(collection(db, "blogPosts"));
+      const postsData = querySnapshot.docs.map(doc => doc.data() as BlogPost);
+      setBlogPosts(postsData);
+    };
+    fetchPosts();
+  }, []);
+
   return (
     <div className="container mx-auto px-4 py-16 md:py-24">
       <header className="text-center mb-12 md:mb-16">

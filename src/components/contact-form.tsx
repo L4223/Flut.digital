@@ -16,6 +16,9 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import CtaButton from "./cta-button"
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+
 
 const formSchema = z.object({
   name: z.string().min(2, "Name muss mindestens 2 Zeichen lang sein."),
@@ -35,16 +38,28 @@ export function ContactForm() {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // In a real app, you would send this to a server
-    console.log(values)
-    
-    toast({
-      title: "Nachricht gesendet!",
-      description: "Vielen Dank für Ihre Kontaktaufnahme. Wir werden uns bald bei Ihnen melden.",
-    })
-    
-    form.reset()
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      await addDoc(collection(db, "contactSubmissions"), {
+        ...values,
+        submittedAt: serverTimestamp(),
+      });
+      
+      toast({
+        title: "Nachricht gesendet!",
+        description: "Vielen Dank für Ihre Kontaktaufnahme. Wir werden uns bald bei Ihnen melden.",
+      });
+      
+      form.reset();
+
+    } catch (error) {
+      console.error("Error writing document: ", error);
+       toast({
+        variant: "destructive",
+        title: "Fehler!",
+        description: "Ihre Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.",
+      });
+    }
   }
 
   return (
