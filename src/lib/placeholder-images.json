@@ -1,3 +1,58 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "ref-1",
+      "description": "Abstract project image 1",
+      "imageUrl": "https://images.unsplash.com/photo-1642432243308-837b2a2372cc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxhYnN0cmFjdCUyMHByb2plY3R8ZW58MHx8fHwxNzU5MjAzODk2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract project"
+    },
+    {
+      "id": "ref-2",
+      "description": "Abstract project image 2",
+      "imageUrl": "https://images.unsplash.com/photo-1510906594845-bc082582c8cc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMHRlY2hub2xvZ3l8ZW58MHx8fHwxNzU5MjA4MDcxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract technology"
+    },
+    {
+      "id": "ref-3",
+      "description": "Abstract project image 3",
+      "imageUrl": "https://images.unsplash.com/photo-1627384113972-f4c0392fe5aa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxkaWdpdGFsJTIwYnJhbmRpbmd8ZW58MHx8fHwxNzU5MjYzNDMxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "digital branding"
+    },
+    {
+      "id": "ref-4",
+      "description": "Abstract project image 4",
+      "imageUrl": "https://images.unsplash.com/photo-1608222351212-18fe0ec7b13b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxkYXRhJTIwYW5hbHl0aWNzfGVufDB8fHx8MTc1OTI0OTE2Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "data analytics"
+    },
+    {
+      "id": "blog-1",
+      "description": "AI blog post image",
+      "imageUrl": "https://images.unsplash.com/photo-1534723328310-e82dad3ee43f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxhcnRpZmljaWFsJTIwaW50ZWxsaWdlbmNlfGVufDB8fHx8MTc1OTIzMzk5M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "artificial intelligence"
+    },
+    {
+      "id": "blog-2",
+      "description": "Web dev blog post image",
+      "imageUrl": "https://images.unsplash.com/photo-1585076641399-5c06d1b3365f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8d2ViJTIwZGV2ZWxvcG1lbnR8ZW58MHx8fHwxNzU5MTc1NDkxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "web development"
+    },
+    {
+      "id": "blog-3",
+      "description": "AR blog post image",
+      "imageUrl": "https://images.unsplash.com/photo-1579616043939-95d87a6e8512?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxhdWdtZW50ZWQlMjByZWFsaXR5fGVufDB8fHx8MTc1OTIyMzI3Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "augmented reality"
+    },
+    {
+      "id": "team-1",
+      "description": "Team member portrait 1",
+      "imageUrl": "https://images.unsplash.com/photo-1607990283143-e81e7a2c9349?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxwcm9mZXNzaW9uYWwlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NTkyNDQ1MTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "professional portrait"
+    },
+    {
+      "id": "team-2",
+      "description": "Team member portrait 2",
+      "imageUrl": "https://images.unsplash.com/photo-1618202159171-dd691ecdcc66?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjcmVhdGl2ZSUyMHByb2Zlc3Npb25hbHxlbnwwfHx8fDE3NTkxODIxNzR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "creative professional"
+    }
+  ]
 }
