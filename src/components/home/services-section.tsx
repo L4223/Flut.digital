@@ -1,11 +1,32 @@
+
+"use client"
 import Link from "next/link";
 import { services } from "@/config/services";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.1,
+      duration: 0.5,
+      ease: "easeInOut",
+    },
+  }),
+};
 
 export default function ServicesSection() {
   return (
-    <section>
+    <motion.section 
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      viewport={{ once: true, amount: 0.2 }}
+    >
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-4xl font-bold tracking-tighter">
           Unsere Kernkompetenzen
@@ -15,28 +36,37 @@ export default function ServicesSection() {
         </p>
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {services.slice(0, 6).map((service) => {
+        {services.slice(0, 6).map((service, i) => {
           const { Icon } = service;
           return (
-            <Link href={`/leistungen/${service.slug}`} key={service.slug} className="group">
-              <Card className="h-full bg-secondary/50 border-0 transition-all duration-300 hover:bg-secondary hover:-translate-y-2">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div className="p-3 bg-background rounded-lg border">
-                      <Icon className="w-8 h-8 text-primary" />
+            <motion.div
+              key={service.slug}
+              custom={i}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.5 }}
+              variants={cardVariants}
+            >
+              <Link href={`/leistungen/${service.slug}`} className="group h-full flex">
+                <Card className="w-full bg-secondary/50 border-0 transition-all duration-300 hover:bg-secondary hover:-translate-y-2">
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <div className="p-3 bg-background rounded-lg border">
+                        <Icon className="w-8 h-8 text-primary" />
+                      </div>
+                      <ArrowRight className="w-5 h-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:text-primary" />
                     </div>
-                    <ArrowRight className="w-5 h-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:text-primary" />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <h3 className="text-xl font-bold mb-2">{service.title}</h3>
-                  <p className="text-muted-foreground line-clamp-3">{service.description}</p>
-                </CardContent>
-              </Card>
-            </Link>
+                  </CardHeader>
+                  <CardContent>
+                    <h3 className="text-xl font-bold mb-2">{service.title}</h3>
+                    <p className="text-muted-foreground line-clamp-3">{service.description}</p>
+                  </CardContent>
+                </Card>
+              </Link>
+            </motion.div>
           );
         })}
       </div>
-    </section>
+    </motion.section>
   );
 }

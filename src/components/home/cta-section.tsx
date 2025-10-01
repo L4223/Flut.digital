@@ -1,9 +1,18 @@
+
+"use client"
 import CtaButton from "@/components/cta-button";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export default function CtaSection() {
     return (
-        <section className="relative overflow-hidden rounded-2xl p-8 md:p-16 border">
+        <motion.section 
+            className="relative overflow-hidden rounded-2xl p-8 md:p-16 border"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true, amount: 0.3 }}
+        >
             <div className="absolute inset-0 radial-glow -z-10 opacity-50"/>
             <div className="text-center">
                 <h2 className="text-3xl md:text-4xl font-bold tracking-tighter mb-4">
@@ -18,6 +27,6 @@ export default function CtaSection() {
                     </Link>
                 </CtaButton>
             </div>
-        </section>
+        </motion.section>
     );
 }

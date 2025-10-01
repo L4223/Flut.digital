@@ -1,5 +1,8 @@
+
+"use client"
 import { Card } from "../ui/card";
 import { Lightbulb, DraftingCompass, Code, Rocket } from "lucide-react";
+import { motion } from "framer-motion";
 
 const processSteps = [
     {
@@ -24,9 +27,27 @@ const processSteps = [
     }
 ];
 
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.1,
+      duration: 0.5,
+      ease: "easeInOut",
+    },
+  }),
+};
+
 export default function ProcessSection() {
     return (
-        <section>
+        <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true, amount: 0.2 }}
+        >
             <div className="text-center mb-12">
                 <h2 className="text-3xl md:text-4xl font-bold tracking-tighter">
                     Unser bewährter Prozess
@@ -37,17 +58,26 @@ export default function ProcessSection() {
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {processSteps.map((step, index) => (
-                    <Card key={index} className="p-6 text-center bg-secondary/50 border-0">
-                        <div className="flex justify-center mb-4">
-                            <div className="p-4 bg-background rounded-full border">
-                                <step.icon className="w-8 h-8 text-primary" />
+                    <motion.div
+                      key={index}
+                      custom={index}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true, amount: 0.5 }}
+                      variants={cardVariants}
+                    >
+                        <Card className="p-6 text-center bg-secondary/50 border-0 h-full">
+                            <div className="flex justify-center mb-4">
+                                <div className="p-4 bg-background rounded-full border">
+                                    <step.icon className="w-8 h-8 text-primary" />
+                                </div>
                             </div>
-                        </div>
-                        <h3 className="text-xl font-bold mb-2">{step.title}</h3>
-                        <p className="text-muted-foreground">{step.description}</p>
-                    </Card>
+                            <h3 className="text-xl font-bold mb-2">{step.title}</h3>
+                            <p className="text-muted-foreground">{step.description}</p>
+                        </Card>
+                    </motion.div>
                 ))}
             </div>
-        </section>
+        </motion.section>
     );
 }

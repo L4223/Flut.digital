@@ -1,9 +1,12 @@
+
+"use client"
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import Image from "next/image";
 import { Badge } from "../ui/badge";
 import CtaButton from "../cta-button";
+import { motion } from "framer-motion";
 
 const featuredReferences = [
   { slug: 'projekt-alpha', title: 'Corporate Re-Branding für Tech-Startup', category: 'Branding', imageUrl: 'https://picsum.photos/seed/ref1/600/400', imageHint: "abstract project" },
@@ -14,7 +17,12 @@ const featuredReferences = [
 
 export default function ReferencesSection() {
     return (
-        <section>
+        <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true, amount: 0.2 }}
+        >
             <div className="text-center mb-12">
                 <h2 className="text-3xl md:text-4xl font-bold tracking-tighter">
                     Ausgewählte Projekte
@@ -63,6 +71,6 @@ export default function ReferencesSection() {
                     <Link href="/referenzen">Alle Projekte ansehen</Link>
                 </CtaButton>
             </div>
-        </section>
+        </motion.section>
     );
 }
