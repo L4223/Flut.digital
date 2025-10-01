@@ -20,9 +20,9 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { Code } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import Link from "next/link";
+import WaveLogo from "@/components/icons/wave-logo";
 
 const formSchema = z.object({
   email: z.string().email("Bitte eine gültige E-Mail eingeben."),
@@ -68,7 +68,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
             <div className="flex justify-center mb-6">
                  <Link href="/" className="flex items-center gap-2">
-                    <Code className="h-8 w-8 text-primary" />
+                    <WaveLogo className="h-8 w-8 text-primary" />
                     <span className="text-2xl font-bold">{siteConfig.name}</span>
                 </Link>
             </div>

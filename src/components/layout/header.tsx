@@ -1,12 +1,14 @@
+
 "use client"
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { siteConfig, navItems } from "@/config/site";
 import CtaButton from "@/components/cta-button";
-import { Code, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import WaveLogo from "../icons/wave-logo";
 
 export default function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -40,7 +42,7 @@ export default function Header() {
         )}>
             <div className="container flex h-16 items-center px-4 md:px-6">
                 <Link href="/" className="mr-6 flex items-center gap-2">
-                    <Code className="h-6 w-6 text-primary" />
+                    <WaveLogo className="h-6 w-6 text-primary" />
                     <span className="font-bold">{siteConfig.name}</span>
                 </Link>
 
@@ -63,7 +65,7 @@ export default function Header() {
                             <SheetContent side="right" className="w-[300px] bg-background">
                                 <div className="p-6">
                                     <Link href="/" className="mb-8 flex items-center gap-2">
-                                        <Code className="h-6 w-6 text-primary" />
+                                        <WaveLogo className="h-6 w-6 text-primary" />
                                         <span className="font-bold">{siteConfig.name}</span>
                                     </Link>
                                     <nav className="flex flex-col gap-6 mb-8">

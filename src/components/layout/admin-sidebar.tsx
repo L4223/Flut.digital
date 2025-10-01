@@ -16,12 +16,13 @@ import {
 import { siteConfig } from "@/config/site";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Link from "next/link";
-import { BookText, Code, Home, LogOut, MessageSquare, Settings } from "lucide-react";
+import { BookText, Home, LogOut, MessageSquare } from "lucide-react";
 import { auth } from "@/lib/firebase";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { signOut } from 'firebase/auth';
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import WaveLogo from "../icons/wave-logo";
 
 const adminNavItems = [
     { href: "/admin", title: "Dashboard", icon: Home },
@@ -54,7 +55,7 @@ export default function AdminSidebar({
       <Sidebar>
         <SidebarHeader>
           <div className="flex items-center gap-2">
-            <Code className="w-6 h-6 text-primary" />
+            <WaveLogo className="w-6 h-6 text-primary" />
             <span className="font-bold text-lg">{siteConfig.name}</span>
           </div>
         </SidebarHeader>

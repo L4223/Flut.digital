@@ -1,10 +1,13 @@
 
 "use client"
 import { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
+import { collection, getDocs, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { format } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { Trash2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface ContactSubmission {
     id: string;
@@ -19,16 +22,31 @@ interface ContactSubmission {
 
 export default function AdminKontaktPage() {
     const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
+    const { toast } = useToast();
+
+    async function fetchSubmissions() {
+        const q = query(collection(db, "contactSubmissions"), orderBy("submittedAt", "desc"));
+        const querySnapshot = await getDocs(q);
+        const submissionsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ContactSubmission));
+        setSubmissions(submissionsData);
+    }
 
     useEffect(() => {
-        async function fetchSubmissions() {
-            const q = query(collection(db, "contactSubmissions"), orderBy("submittedAt", "desc"));
-            const querySnapshot = await getDocs(q);
-            const submissionsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ContactSubmission));
-            setSubmissions(submissionsData);
-        }
         fetchSubmissions();
     }, []);
+
+    const handleDelete = async (id: string) => {
+        if(confirm("Möchten Sie diese Anfrage wirklich löschen?")) {
+            try {
+                await deleteDoc(doc(db, "contactSubmissions", id));
+                toast({ title: "Erfolg", description: "Anfrage wurde gelöscht." });
+                fetchSubmissions();
+            } catch (error) {
+                console.error("Error deleting document: ", error);
+                toast({ variant: "destructive", title: "Fehler", description: "Anfrage konnte nicht gelöscht werden." });
+            }
+        }
+    }
 
   return (
     <div>
@@ -51,6 +69,11 @@ export default function AdminKontaktPage() {
                     <CardContent>
                         <p>{submission.message}</p>
                     </CardContent>
+                    <CardFooter className="flex justify-end">
+                        <Button variant="destructive" size="icon" onClick={() => handleDelete(submission.id)}>
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                    </CardFooter>
                 </Card>
             )) : (
                 <p>Keine Kontaktanfragen vorhanden.</p>

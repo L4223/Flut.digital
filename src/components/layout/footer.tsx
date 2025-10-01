@@ -1,6 +1,8 @@
+
 import Link from "next/link";
 import { siteConfig, navItems } from "@/config/site";
-import { Github, Twitter, Linkedin, Code } from "lucide-react";
+import { Github, Twitter, Linkedin } from "lucide-react";
+import WaveLogo from "../icons/wave-logo";
 
 export default function Footer() {
   const legalLinks = [
@@ -19,7 +21,7 @@ export default function Footer() {
       <div className="container px-4 md:px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="flex flex-col gap-2">
             <Link href="/" className="flex items-center gap-2">
-                <Code className="w-6 h-6 text-primary" />
+                <WaveLogo className="w-6 h-6 text-primary" />
                 <span className="font-bold text-lg">{siteConfig.name}</span>
             </Link>
             <p className="text-muted-foreground text-sm">
