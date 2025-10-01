@@ -1,3 +1,4 @@
+
 import { services, type Service } from "@/config/services";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
@@ -28,7 +29,7 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
 
     return (
         <div className="container mx-auto px-4 py-16 md:py-24">
-            <div className="relative isolate overflow-hidden">
+            <div className="relative isolate py-8">
                 <div className="absolute inset-0 radial-glow -z-10" />
                 <header className="text-center mb-12 md:mb-20 max-w-4xl mx-auto">
                     <Badge variant="secondary" className="mb-4 text-sm font-medium">{service.category}</Badge>
