@@ -8,6 +8,7 @@ import Chatbot from '@/components/chatbot/chatbot';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { migrateBlogPostsToFirestore } from '@/config/blog';
+import CookieBanner from '@/components/layout/cookie-banner';
 
 export default function RootLayout({
   children,
@@ -52,6 +53,7 @@ export default function RootLayout({
         <main className="flex-grow">{children}</main>
         <Footer />
         <Chatbot />
+        <CookieBanner />
         <Toaster />
       </body>
     </html>
