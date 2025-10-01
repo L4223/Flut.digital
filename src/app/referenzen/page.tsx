@@ -5,51 +5,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-
-const references = [
-  {
-    slug: "projekt-alpha",
-    title: "Projekt Alpha: Corporate Re-Branding",
-    category: "Branding",
-    imageUrl: "https://picsum.photos/seed/ref1/600/400",
-    imageHint: "abstract project"
-  },
-  {
-    slug: "projekt-beta",
-    title: "Projekt Beta: Headless E-Commerce Plattform",
-    category: "Webentwicklung",
-    imageUrl: "https://picsum.photos/seed/ref2/600/400",
-    imageHint: "abstract technology"
-  },
-  {
-    slug: "projekt-gamma",
-    title: "Projekt Gamma: Interaktive AR-Anwendung",
-    category: "3D/AR",
-    imageUrl: "https://picsum.photos/seed/ref3/600/400",
-    imageHint: "digital branding"
-  },
-  {
-    slug: "projekt-delta",
-    title: "Projekt Delta: KI-gestützte Analyse-Tools",
-    category: "KI-Lösungen",
-    imageUrl: "https://picsum.photos/seed/ref4/600/400",
-    imageHint: "data analytics"
-  },
-  {
-    slug: "projekt-epsilon",
-    title: "Projekt Epsilon: Social Media Kampagne",
-    category: "Social Media",
-    imageUrl: "https://picsum.photos/seed/ref5/600/400",
-    imageHint: "social media"
-  },
-    {
-    slug: "projekt-zeta",
-    title: "Projekt Zeta: Web-App für Start-up",
-    category: "Webentwicklung",
-    imageUrl: "https://picsum.photos/seed/ref6/600/400",
-    imageHint: "modern startup"
-  },
-];
+import { references } from "@/config/references";
 
 export default function ReferenzenPage() {
   return (

@@ -7,34 +7,33 @@ export default function ImpressumPage() {
         
         <h2>Angaben gemäß § 5 TMG</h2>
         <p>
-          [Name/Firma des Betreibers]<br/>
-          [Straße und Hausnummer]<br/>
-          [PLZ und Ort]<br/>
-          [Land]
+          <strong>Max Mustermann</strong><br/>
+          Musterstraße 1<br/>
+          12345 Musterstadt<br/>
+          Deutschland
         </p>
 
         <h2>Kontakt</h2>
         <p>
-          Telefon: [Telefonnummer]<br/>
-          E-Mail: [E-Mail-Adresse]
-        </p>
-
-        <h2>Vertreten durch</h2>
-        <p>
-          [Name des Vertretungsberechtigten]
+          Telefon: +49 (0) 123 456789<br/>
+          E-Mail: hallo@flut.digital
         </p>
 
         <h2>Umsatzsteuer-ID</h2>
         <p>
           Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:<br/>
-          [USt-IdNr.]
+          DE123456789
         </p>
 
         <h2>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
         <p>
-          [Name und Anschrift des Verantwortlichen]
+          Max Mustermann<br/>
+          Anschrift wie oben
         </p>
-
+        <p className="p-4 rounded-md border border-destructive/50 bg-destructive/10 text-destructive-foreground/80 text-sm">
+          <strong>Wichtiger Hinweis:</strong> Dies ist ein Muster-Impressum. Bitte ersetzen Sie die Platzhalterdaten durch Ihre eigenen, korrekten Angaben, um rechtliche Anforderungen zu erfüllen.
+        </p>
+        
         <h2>Haftungsausschluss (Disclaimer)</h2>
         <h3>Haftung für Inhalte</h3>
         <p>

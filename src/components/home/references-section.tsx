@@ -7,13 +7,9 @@ import Image from "next/image";
 import { Badge } from "../ui/badge";
 import CtaButton from "../cta-button";
 import { motion } from "framer-motion";
+import { references } from "@/config/references";
 
-const featuredReferences = [
-  { slug: 'projekt-alpha', title: 'Corporate Re-Branding für Tech-Startup', category: 'Branding', imageUrl: 'https://picsum.photos/seed/ref1/600/400', imageHint: "abstract project" },
-  { slug: 'projekt-beta', title: 'Headless E-Commerce Plattform', category: 'Webentwicklung', imageUrl: 'https://picsum.photos/seed/ref2/600/400', imageHint: "abstract technology" },
-  { slug: 'projekt-gamma', title: 'Interaktive AR-Anwendung für Museum', category: '3D/AR', imageUrl: 'https://picsum.photos/seed/ref3/600/400', imageHint: "digital branding" },
-  { slug: 'projekt-delta', title: 'KI-gestützte Daten-Analyse-Tools', category: 'KI-Lösungen', imageUrl: 'https://picsum.photos/seed/ref4/600/400', imageHint: "data analytics" },
-];
+const featuredReferences = references.slice(0, 4);
 
 export default function ReferencesSection() {
     return (

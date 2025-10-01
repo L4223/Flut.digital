@@ -6,6 +6,10 @@ export default function DatenschutzPage() {
         <h1>Datenschutzerklärung</h1>
         <p>Stand: Juli 2024</p>
         
+        <p className="p-4 rounded-md border border-destructive/50 bg-destructive/10 text-destructive-foreground/80 text-sm">
+          <strong>Wichtiger Hinweis:</strong> Dies ist eine Muster-Datenschutzerklärung. Sie muss an Ihre spezifischen Datenverarbeitungsprozesse angepasst werden. Konsultieren Sie für eine rechtssichere Erklärung einen Anwalt oder Datenschutzbeauftragten.
+        </p>
+
         <h2>1. Datenschutz auf einen Blick</h2>
         <h3>Allgemeine Hinweise</h3>
         <p>
@@ -25,11 +29,11 @@ export default function DatenschutzPage() {
 
         <h3>Verantwortliche Stelle</h3>
         <p>
-            [Name/Firma des Betreibers]<br/>
-            [Straße und Hausnummer]<br/>
-            [PLZ und Ort]<br/>
-            [Land]<br/>
-            E-Mail: [E-Mail-Adresse]
+            Die verantwortliche Stelle für die Datenverarbeitung auf dieser Website ist:<br/><br/>
+            <strong>Max Mustermann</strong><br/>
+            Musterstraße 1<br/>
+            12345 Musterstadt<br/>
+            E-Mail: hallo@flut.digital
         </p>
 
         <h2>3. Datenerfassung auf dieser Website</h2>
@@ -47,8 +51,6 @@ export default function DatenschutzPage() {
           Anfrage und für den Fall von Anschlussfragen bei uns gespeichert. Diese Daten geben wir nicht ohne
           Ihre Einwilligung weiter.
         </p>
-
-        {/* Weitere Abschnitte nach Bedarf hinzufügen */}
       </div>
     </div>
   );

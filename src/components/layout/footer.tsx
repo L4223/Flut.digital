@@ -9,9 +9,9 @@ export default function Footer() {
   ];
 
   const socialLinks = [
-    { name: "GitHub", href: "#", icon: Github },
-    { name: "Twitter", href: "#", icon: Twitter },
-    { name: "LinkedIn", href: "#", icon: Linkedin },
+    { name: "GitHub", href: siteConfig.social.github, icon: Github },
+    { name: "Twitter", href: siteConfig.social.twitter, icon: Twitter },
+    { name: "LinkedIn", href: siteConfig.social.linkedin, icon: Linkedin },
   ];
 
   return (
@@ -56,7 +56,7 @@ export default function Footer() {
                 <h4 className="font-semibold mb-3">Social Media</h4>
                 <div className="flex space-x-4">
                     {socialLinks.map((social) => (
-                        <Link key={social.name} href={social.href} className="text-muted-foreground hover:text-primary transition-colors">
+                        <Link key={social.name} href={social.href} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                             <social.icon className="w-5 h-5" />
                             <span className="sr-only">{social.name}</span>
                         </Link>
