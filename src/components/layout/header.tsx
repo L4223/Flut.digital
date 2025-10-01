@@ -46,7 +46,7 @@ export default function Header() {
                     <span className="font-bold">{siteConfig.name}</span>
                 </Link>
 
-                <nav className="hidden md:flex flex-1 items-center gap-6">
+                <nav className="hidden md:flex items-center gap-6">
                     {navLinks}
                 </nav>
 
