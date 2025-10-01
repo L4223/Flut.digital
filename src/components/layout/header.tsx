@@ -50,7 +50,7 @@ export default function Header() {
                     {navLinks}
                 </nav>
 
-                <div className="flex items-center justify-end gap-4 ml-auto">
+                <div className="flex flex-1 items-center justify-end gap-4">
                     <CtaButton asChild size="sm" className="hidden md:flex">
                         <Link href="/kontakt">Kontakt</Link>
                     </CtaButton>
