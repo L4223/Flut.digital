@@ -9,6 +9,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { migrateBlogPostsToFirestore } from '@/config/blog';
 import CookieBanner from '@/components/layout/cookie-banner';
+import { hasApiKey } from '@/lib/firebase';
 
 export default function RootLayout({
   children,
@@ -22,7 +23,9 @@ export default function RootLayout({
   useEffect(() => {
     // This is a one-time migration script.
     // In a real production app, you would run this from a CLI or a secure endpoint.
-    migrateBlogPostsToFirestore();
+    if (hasApiKey) {
+      migrateBlogPostsToFirestore();
+    }
   }, []);
 
   if (isAdminPage || isLoginPage) {
