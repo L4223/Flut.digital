@@ -40,20 +40,23 @@ export default function Header() {
             "sticky top-0 z-50 w-full transition-all duration-300",
             isScrolled ? "border-b glass" : "border-b border-transparent"
         )}>
-            <div className="container flex h-16 items-center px-4 md:px-6">
-                <Link href="/" className="mr-6 flex items-center gap-2">
+            <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+                <Link href="/" className="flex items-center gap-2 mr-6">
                     <WaveLogo className="h-6 w-6 text-primary" />
                     <span className="font-bold">{siteConfig.name}</span>
                 </Link>
 
-                <nav className="hidden md:flex items-center gap-6">
-                    {navLinks}
-                </nav>
-
                 <div className="flex flex-1 items-center justify-end gap-4">
-                    <CtaButton asChild size="sm" className="hidden md:flex">
-                        <Link href="/kontakt">Kontakt</Link>
-                    </CtaButton>
+                    <nav className="hidden md:flex gap-6 items-center">
+                        {navLinks}
+                    </nav>
+
+                    <div className="hidden md:flex items-center">
+                         <CtaButton asChild size="sm">
+                            <Link href="/kontakt">Kontakt</Link>
+                        </CtaButton>
+                    </div>
+
                     <div className="md:hidden">
                         <Sheet>
                             <SheetTrigger asChild>
