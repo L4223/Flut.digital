@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -35,6 +35,11 @@ export default function LoginPage() {
   const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -74,6 +79,8 @@ export default function LoginPage() {
     }
   }
 
+  const isFormDisabled = !hasApiKey || isLoading;
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
         <div className="w-full max-w-md">
@@ -89,7 +96,7 @@ export default function LoginPage() {
                 <CardDescription>Bitte melden Sie sich an, um fortzufahren.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                {!hasApiKey && (
+                {isClient && !hasApiKey && (
                     <Alert variant="destructive" className="mb-6">
                         <Terminal className="h-4 w-4" />
                         <AlertTitle>Firebase nicht konfiguriert!</AlertTitle>
@@ -100,7 +107,7 @@ export default function LoginPage() {
                 )}
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <fieldset disabled={!hasApiKey || isLoading}>
+                    <fieldset disabled={isClient && isFormDisabled}>
                         <FormField
                             control={form.control}
                             name="email"
@@ -127,7 +134,7 @@ export default function LoginPage() {
                             </FormItem>
                             )}
                         />
-                        <Button type="submit" className="w-full mt-6" disabled={!hasApiKey || isLoading}>
+                        <Button type="submit" className="w-full mt-6" disabled={isClient && isFormDisabled}>
                             {isLoading ? "Anmeldung läuft..." : "Anmelden"}
                         </Button>
                     </fieldset>
