@@ -9,8 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-export const dynamic = 'force-dynamic';
-
 interface ContactSubmission {
     id: string;
     name: string;

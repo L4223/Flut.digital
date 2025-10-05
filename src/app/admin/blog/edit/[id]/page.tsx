@@ -21,8 +21,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect } from "react";
 
-export const dynamic = 'force-dynamic';
-
 const formSchema = z.object({
   title: z.string().min(5, "Titel muss mind. 5 Zeichen haben."),
   slug: z.string().min(3, "Slug muss mind. 3 Zeichen haben."),

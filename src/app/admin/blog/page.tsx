@@ -10,8 +10,6 @@ import { db } from '@/lib/firebase';
 import { BlogPost } from '@/config/blog';
 import { useToast } from '@/hooks/use-toast';
 
-export const dynamic = 'force-dynamic';
-
 type BlogPostWithId = BlogPost & { id: string };
 
 export default function AdminBlogPage() {
