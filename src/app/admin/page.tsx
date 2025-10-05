@@ -7,12 +7,15 @@ import { collection, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { BookText, MessageSquare } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export default function AdminDashboard() {
   const [blogCount, setBlogCount] = useState(0);
   const [contactCount, setContactCount] = useState(0);
 
   useEffect(() => {
     async function fetchCounts() {
+      if (!db) return;
       const blogSnapshot = await getDocs(collection(db, "blogPosts"));
       setBlogCount(blogSnapshot.size);
 

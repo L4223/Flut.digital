@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+export const dynamic = 'force-dynamic';
+
 interface ContactSubmission {
     id: string;
     name: string;
@@ -25,6 +27,7 @@ export default function AdminKontaktPage() {
     const { toast } = useToast();
 
     async function fetchSubmissions() {
+        if (!db) return;
         const q = query(collection(db, "contactSubmissions"), orderBy("submittedAt", "desc"));
         const querySnapshot = await getDocs(q);
         const submissionsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ContactSubmission));
@@ -37,6 +40,7 @@ export default function AdminKontaktPage() {
 
     const handleDelete = async (id: string) => {
         if(confirm("Möchten Sie diese Anfrage wirklich löschen?")) {
+            if (!db) return;
             try {
                 await deleteDoc(doc(db, "contactSubmissions", id));
                 toast({ title: "Erfolg", description: "Anfrage wurde gelöscht." });

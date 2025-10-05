@@ -21,6 +21,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect } from "react";
 
+export const dynamic = 'force-dynamic';
+
 const formSchema = z.object({
   title: z.string().min(5, "Titel muss mind. 5 Zeichen haben."),
   slug: z.string().min(3, "Slug muss mind. 3 Zeichen haben."),
@@ -44,6 +46,7 @@ export default function EditBlogPostPage() {
   useEffect(() => {
     if (postId) {
       const fetchPost = async () => {
+        if (!db) return;
         const docRef = doc(db, "blogPosts", postId);
         const docSnap = await getDoc(docRef);
 
@@ -63,6 +66,7 @@ export default function EditBlogPostPage() {
   }, [postId, form, router, toast]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!db) return;
     try {
       const docRef = doc(db, "blogPosts", postId);
       await updateDoc(docRef, {

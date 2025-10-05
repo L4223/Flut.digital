@@ -10,6 +10,8 @@ import { db } from '@/lib/firebase';
 import { BlogPost } from '@/config/blog';
 import { useToast } from '@/hooks/use-toast';
 
+export const dynamic = 'force-dynamic';
+
 type BlogPostWithId = BlogPost & { id: string };
 
 export default function AdminBlogPage() {
@@ -17,6 +19,7 @@ export default function AdminBlogPage() {
     const { toast } = useToast();
 
     async function fetchPosts() {
+        if (!db) return;
         const querySnapshot = await getDocs(collection(db, "blogPosts"));
         const postsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as BlogPostWithId));
         setPosts(postsData);
@@ -28,6 +31,7 @@ export default function AdminBlogPage() {
 
     const handleDelete = async (id: string) => {
         if(confirm("Möchten Sie diesen Beitrag wirklich löschen?")) {
+            if (!db) return;
             try {
                 await deleteDoc(doc(db, "blogPosts", id));
                 toast({ title: "Erfolg", description: "Blogbeitrag wurde gelöscht." });
