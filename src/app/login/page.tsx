@@ -19,10 +19,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { auth, hasApiKey } from "@/lib/firebase";
 import { siteConfig } from "@/config/site";
 import Link from "next/link";
 import WaveLogo from "@/components/icons/wave-logo";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Terminal } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email("Bitte eine gültige E-Mail eingeben."),
@@ -43,6 +45,15 @@ export default function LoginPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!auth) {
+        toast({
+            variant: "destructive",
+            title: "Firebase nicht konfiguriert",
+            description: "Bitte hinterlegen Sie Ihre Firebase-Zugangsdaten in den Umgebungsvariablen.",
+        });
+        return;
+    }
+    
     setIsLoading(true);
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
@@ -78,37 +89,48 @@ export default function LoginPage() {
                 <CardDescription>Bitte melden Sie sich an, um fortzufahren.</CardDescription>
                 </CardHeader>
                 <CardContent>
+                {!hasApiKey && (
+                    <Alert variant="destructive" className="mb-6">
+                        <Terminal className="h-4 w-4" />
+                        <AlertTitle>Firebase nicht konfiguriert!</AlertTitle>
+                        <AlertDescription>
+                            Der Login ist deaktiviert, da keine Firebase-Zugangsdaten gefunden wurden. Bitte richten Sie Ihre Umgebungsvariablen ein.
+                        </AlertDescription>
+                    </Alert>
+                )}
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                            <Input placeholder="admin@email.de" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Passwort</FormLabel>
-                            <FormControl>
-                            <Input type="password" placeholder="••••••••" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    <Button type="submit" className="w-full" disabled={isLoading}>
-                        {isLoading ? "Anmeldung läuft..." : "Anmelden"}
-                    </Button>
+                    <fieldset disabled={!hasApiKey || isLoading}>
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                <Input placeholder="admin@email.de" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Passwort</FormLabel>
+                                <FormControl>
+                                <Input type="password" placeholder="••••••••" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                        <Button type="submit" className="w-full mt-6" disabled={!hasApiKey || isLoading}>
+                            {isLoading ? "Anmeldung läuft..." : "Anmelden"}
+                        </Button>
+                    </fieldset>
                     </form>
                 </Form>
                 </CardContent>
