@@ -79,7 +79,7 @@ export default function LoginPage() {
     }
   }
 
-  const isFormDisabled = !hasApiKey || isLoading;
+  const isFormDisabled = isLoading || (isClient && !hasApiKey);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -107,7 +107,7 @@ export default function LoginPage() {
                 )}
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <fieldset disabled={isClient && isFormDisabled}>
+                    <fieldset disabled={isFormDisabled}>
                         <FormField
                             control={form.control}
                             name="email"
@@ -134,7 +134,7 @@ export default function LoginPage() {
                             </FormItem>
                             )}
                         />
-                        <Button type="submit" className="w-full mt-6" disabled={isClient && isFormDisabled}>
+                        <Button type="submit" className="w-full mt-6" disabled={isFormDisabled}>
                             {isLoading ? "Anmeldung läuft..." : "Anmelden"}
                         </Button>
                     </fieldset>
