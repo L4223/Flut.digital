@@ -46,50 +46,50 @@ export default function Header() {
                     <span className="font-bold">{siteConfig.name}</span>
                 </Link>
 
-                <div className="flex flex-1 items-center justify-end gap-4">
-                    <nav className="hidden md:flex gap-6 items-center">
+                {/* Desktop Navigation */}
+                <div className="hidden md:flex items-center gap-6">
+                    <nav className="flex gap-6 items-center">
                         {navLinks}
                     </nav>
+                    <CtaButton asChild size="sm">
+                        <Link href="/kontakt">Kontakt</Link>
+                    </CtaButton>
+                </div>
 
-                    <div className="hidden md:flex items-center">
-                         <CtaButton asChild size="sm">
-                            <Link href="/kontakt">Kontakt</Link>
-                        </CtaButton>
-                    </div>
 
-                    <div className="md:hidden">
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <button className="p-2">
-                                    <Menu className="h-6 w-6" />
-                                    <span className="sr-only">Menü öffnen</span>
-                                </button>
-                            </SheetTrigger>
-                            <SheetContent side="right" className="w-[300px] bg-background">
-                                <div className="p-6">
-                                    <Link href="/" className="mb-8 flex items-center gap-2">
-                                        <WaveLogo className="h-6 w-6 text-primary" />
-                                        <span className="font-bold">{siteConfig.name}</span>
-                                    </Link>
-                                    <nav className="flex flex-col gap-6 mb-8">
-                                        {navItems.map((item) => (
-                                            <SheetClose asChild key={item.href}>
-                                                <Link
-                                                    href={item.href}
-                                                    className="text-lg font-medium hover:text-primary transition-colors"
-                                                >
-                                                    {item.title}
-                                                </Link>
-                                            </SheetClose>
-                                        ))}
-                                    </nav>
-                                    <CtaButton asChild className="w-full">
-                                        <Link href="/kontakt">Kontakt</Link>
-                                    </CtaButton>
-                                </div>
-                            </SheetContent>
-                        </Sheet>
-                    </div>
+                {/* Mobile Navigation */}
+                <div className="md:hidden">
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <button className="p-2">
+                                <Menu className="h-6 w-6" />
+                                <span className="sr-only">Menü öffnen</span>
+                            </button>
+                        </SheetTrigger>
+                        <SheetContent side="right" className="w-[300px] bg-background">
+                            <div className="p-6">
+                                <Link href="/" className="mb-8 flex items-center gap-2">
+                                    <WaveLogo className="h-6 w-6 text-primary" />
+                                    <span className="font-bold">{siteConfig.name}</span>
+                                </Link>
+                                <nav className="flex flex-col gap-6 mb-8">
+                                    {navItems.map((item) => (
+                                        <SheetClose asChild key={item.href}>
+                                            <Link
+                                                href={item.href}
+                                                className="text-lg font-medium hover:text-primary transition-colors"
+                                            >
+                                                {item.title}
+                                            </Link>
+                                        </SheetClose>
+                                    ))}
+                                </nav>
+                                <CtaButton asChild className="w-full">
+                                    <Link href="/kontakt">Kontakt</Link>
+                                </CtaButton>
+                            </div>
+                        </SheetContent>
+                    </Sheet>
                 </div>
             </div>
         </header>
