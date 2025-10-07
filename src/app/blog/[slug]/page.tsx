@@ -21,15 +21,16 @@ async function getPostData(slug: string): Promise<BlogPost | null> {
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
     const [post, setPost] = useState<BlogPost | null>(null);
     const [loading, setLoading] = useState(true);
+    const { slug } = params;
 
     useEffect(() => {
-        if (params.slug) {
-            getPostData(params.slug).then(data => {
+        if (slug) {
+            getPostData(slug).then(data => {
                 setPost(data);
                 setLoading(false);
             });
         }
-    }, [params.slug]);
+    }, [slug]);
 
     if (loading) {
         return <div className="container mx-auto px-4 py-16 md:py-24 text-center">Lade Beitrag...</div>

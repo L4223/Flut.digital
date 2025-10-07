@@ -27,15 +27,16 @@ async function getReferenceData(slug: string): Promise<Reference | null> {
 export default function ReferenceDetailPage({ params }: { params: { slug: string } }) {
     const [reference, setReference] = useState<Reference | null>(null);
     const [loading, setLoading] = useState(true);
+    const { slug } = params;
 
     useEffect(() => {
-        if (params.slug) {
-            getReferenceData(params.slug).then(data => {
+        if (slug) {
+            getReferenceData(slug).then(data => {
                 setReference(data);
                 setLoading(false);
             });
         }
-    }, [params.slug]);
+    }, [slug]);
 
     if (loading) {
         return <div className="container mx-auto px-4 py-16 md:py-24 text-center">Lade Referenz...</div>
@@ -128,4 +129,3 @@ export default function ReferenceDetailPage({ params }: { params: { slug: string
 //       slug: doc.data().slug,
 //     }));
 // }
-
