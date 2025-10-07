@@ -5,9 +5,24 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import { references } from "@/config/references";
+import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { Reference } from "@/config/references";
 
 export default function ReferenzenPage() {
+  const [references, setReferences] = useState<Reference[]>([]);
+
+  useEffect(() => {
+    const fetchReferences = async () => {
+      if (!db) return;
+      const querySnapshot = await getDocs(collection(db, "references"));
+      const refsData = querySnapshot.docs.map(doc => doc.data() as Reference);
+      setReferences(refsData);
+    };
+    fetchReferences();
+  }, []);
+
   return (
     <div className="container mx-auto px-4 py-16 md:py-24">
       <motion.header 

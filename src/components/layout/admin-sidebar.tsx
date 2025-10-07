@@ -16,7 +16,7 @@ import {
 import { siteConfig } from "@/config/site";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Link from "next/link";
-import { BookText, Home, LogOut, MessageSquare } from "lucide-react";
+import { BookText, Home, LogOut, MessageSquare, Briefcase } from "lucide-react";
 import { auth } from "@/lib/firebase";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { signOut } from 'firebase/auth';
@@ -27,6 +27,7 @@ import WaveLogo from "../icons/wave-logo";
 const adminNavItems = [
     { href: "/admin", title: "Dashboard", icon: Home },
     { href: "/admin/blog", title: "Blog", icon: BookText },
+    { href: "/admin/referenzen", title: "Referenzen", icon: Briefcase },
     { href: "/admin/kontakt", title: "Kontaktanfragen", icon: MessageSquare },
 ]
 

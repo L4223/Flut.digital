@@ -8,6 +8,7 @@ import Chatbot from '@/components/chatbot/chatbot';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { migrateBlogPostsToFirestore } from '@/config/blog';
+import { migrateReferencesToFirestore } from '@/config/references';
 import CookieBanner from '@/components/layout/cookie-banner';
 import { hasApiKey } from '@/lib/firebase';
 
@@ -25,6 +26,7 @@ export default function RootLayout({
     // In a real production app, you would run this from a CLI or a secure endpoint.
     if (hasApiKey) {
       migrateBlogPostsToFirestore();
+      migrateReferencesToFirestore();
     }
   }, []);
 
