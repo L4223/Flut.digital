@@ -7,16 +7,16 @@ export default function ImpressumPage() {
         
         <h2>Angaben gemäß § 5 TMG</h2>
         <p>
-          <strong>Max Mustermann</strong><br/>
-          Musterstraße 1<br/>
-          12345 Musterstadt<br/>
+          <strong>Lasse Knodt</strong><br/>
+          Kieler Str. 9 b<br/>
+          24229 Schwedeneck<br/>
           Deutschland
         </p>
 
         <h2>Kontakt</h2>
         <p>
-          Telefon: +49 (0) 123 456789<br/>
-          E-Mail: hallo@flut.digital
+          Telefon: +49 (0) 151 59849866<br/>
+          E-Mail: kontakt@flut.digital
         </p>
 
         <h2>Umsatzsteuer-ID</h2>

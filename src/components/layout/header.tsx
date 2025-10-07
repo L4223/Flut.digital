@@ -40,14 +40,14 @@ export default function Header() {
             "sticky top-0 z-50 w-full transition-all duration-300",
             isScrolled ? "border-b glass" : "border-b border-transparent"
         )}>
-            <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+            <div className="w-full flex h-16 items-center justify-between px-4 md:px-8">
                 <Link href="/" className="flex items-center gap-2 mr-6">
                     <WaveLogo className="h-6 w-6 text-primary" />
                     <span className="font-bold">{siteConfig.name}</span>
                 </Link>
 
                 {/* Desktop Navigation */}
-                <div className="hidden md:flex items-center gap-6">
+                <div className="hidden md:flex items-center gap-14">
                     <nav className="flex gap-6 items-center">
                         {navLinks}
                     </nav>

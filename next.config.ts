@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
+    domains: [
+      "s3.eu-north-1.amazonaws.com"
+    ],
     remotePatterns: [
       {
         protocol: 'https',

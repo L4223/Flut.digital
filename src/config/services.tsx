@@ -21,11 +21,11 @@ export const services: Service[] = [
         features: ["Headless CMS", "E-Commerce-Lösungen", "Progressive Web Apps (PWA)", "Performance-Optimierung"],
         details: (
             <>
-                <h3>Moderne Web-Architekturen</h3>
+                <div className="text-xl font-semibold mb-2 text-foreground">Moderne Web-Architekturen</div>
                 <p>
                     Wir setzen auf moderne Technologien wie Next.js und serverlose Architekturen, um blitzschnelle und robuste Web-Erlebnisse zu schaffen. Ob Corporate Website, E-Commerce-Plattform oder komplexe Webanwendung – wir liefern Qualität.
                 </p>
-                <h3>Fokus auf User Experience</h3>
+                <div className="text-xl font-semibold mt-6 mb-2 text-foreground">Fokus auf User Experience</div>
                 <p>
                     Ein gutes Design ist mehr als nur Ästhetik. Wir legen größten Wert auf eine intuitive Benutzerführung und Barrierefreiheit, um sicherzustellen, dass Ihre Zielgruppe die bestmögliche Erfahrung hat.
                 </p>
@@ -40,12 +40,12 @@ export const services: Service[] = [
         Icon: SwatchBook,
         features: ["Corporate Identity", "UI/UX Design", "Design Systeme", "Logo-Entwicklung"],
         details: (
-             <>
-                <h3>Strategische Markenbildung</h3>
+            <>
+                <div className="text-xl font-semibold mb-2 text-foreground">Strategische Markenbildung</div>
                 <p>
                     Ihre Marke ist Ihr wichtigstes Gut. Wir helfen Ihnen, eine starke, kohärente Markenidentität zu entwickeln, die Ihre Werte kommuniziert und eine emotionale Verbindung zu Ihrer Zielgruppe aufbaut.
                 </p>
-                <h3>Digital First Design</h3>
+                <div className="text-xl font-semibold mt-6 mb-2 text-foreground">Digital First Design</div>
                 <p>
                     Unsere Designs sind für die digitale Welt optimiert. Wir erstellen intuitive Benutzeroberflächen (UI) und durchdachte Nutzererlebnisse (UX), die auf allen Geräten funktionieren und Ihre Nutzer begeistern.
                 </p>
@@ -60,8 +60,8 @@ export const services: Service[] = [
         Icon: BrainCircuit,
         features: ["Interaktive 3D-Modelle", "Web-basierte AR-Erlebnisse", "Produktkonfiguratoren", "Virtuelle Showrooms"],
         details: (
-             <>
-                <h3>Interaktion in der dritten Dimension</h3>
+            <>
+                <div className="text-xl font-semibold mb-2 text-foreground">Interaktion in der dritten Dimension</div>
                 <p>
                     Mit Technologien wie Three.js und WebGL bringen wir Ihre Produkte und Ideen in die dritte Dimension. Erschaffen Sie interaktive Erlebnisse, die Ihre Kunden direkt im Browser erkunden können.
                 </p>
@@ -76,8 +76,8 @@ export const services: Service[] = [
         Icon: Bot,
         features: ["Chatbots & Virtuelle Assistenten", "Automatisierte Prozesse", "Datenanalyse & Prognosen", "Integration von LLMs"],
         details: (
-             <>
-                <h3>Intelligenz für Ihr Business</h3>
+            <>
+                <div className="text-xl font-semibold mb-2 text-foreground">Intelligenz für Ihr Business</div>
                 <p>
                     Nutzen Sie das Potenzial von künstlicher Intelligenz. Wir entwickeln und integrieren KI-Modelle, die Ihre Prozesse optimieren, Kundenservice automatisieren oder völlig neue Geschäftsmodelle ermöglichen.
                 </p>
@@ -92,8 +92,8 @@ export const services: Service[] = [
         Icon: Handshake,
         features: ["Content-Strategie", "Community Management", "Performance Marketing", "Influencer-Kooperationen"],
         details: (
-             <>
-                <h3>Authentische Verbindungen</h3>
+            <>
+                <div className="text-xl font-semibold mb-2 text-foreground">Authentische Verbindungen</div>
                 <p>
                     Wir helfen Ihnen, auf den richtigen Plattformen eine authentische Stimme zu finden und eine engagierte Community aufzubauen. Von der Strategie bis zur Umsetzung Ihrer Social-Media-Präsenz.
                 </p>
@@ -108,8 +108,8 @@ export const services: Service[] = [
         Icon: Server,
         features: ["Next.js & React Workshops", "DevOps für Entwickler", "KI-Grundlagen für Teams", "Individuelle Firmenschulungen"],
         details: (
-             <>
-                <h3>Wissen, das weiterbringt</h3>
+            <>
+                <div className="text-xl font-semibold mb-2 text-foreground">Wissen, das weiterbringt</div>
                 <p>
                     Investieren Sie in die Fähigkeiten Ihres Teams. Unsere Experten vermitteln praxisrelevantes Wissen in maßgeschneiderten Schulungen zu den modernsten Technologien und Methoden der Softwareentwicklung.
                 </p>

@@ -4,9 +4,9 @@ import { BrainCircuit, Code, SwatchBook, Bot, Server, Handshake } from "lucide-r
 import { motion } from "framer-motion";
 
 const technologies = [
-  { name: "Next.js" }, { name: "React" }, { name: "TypeScript" }, { name: "Node.js" },
+  { name: "Next.js" }, { name: "React" }, { name: "Type Script" }, { name: "Node.js" },
   { name: "Python" }, { name: "Firebase" }, { name: "Docker" }, { name: "Google Cloud" },
-  { name: "Three.js" }, { name: "TensorFlow" }
+  { name: "Three.js" }, { name: "Tensor Flow" }
 ];
 
 const badgeVariants = {
