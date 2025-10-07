@@ -40,6 +40,16 @@ export default function EditReferencePage() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: "",
+      slug: "",
+      description: "",
+      category: "",
+      features: "",
+      details: "",
+      imageUrl: "",
+      imageHint: "",
+    },
   });
 
   useEffect(() => {
@@ -204,4 +214,3 @@ export default function EditReferencePage() {
     </div>
   );
 }
-
