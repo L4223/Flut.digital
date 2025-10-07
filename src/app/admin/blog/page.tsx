@@ -9,12 +9,24 @@ import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { BlogPost } from '@/config/blog';
 import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type BlogPostWithId = BlogPost & { id: string };
 
 export default function AdminBlogPage() {
     const [posts, setPosts] = useState<BlogPostWithId[]>([]);
     const { toast } = useToast();
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [postToDelete, setPostToDelete] = useState<string | null>(null);
 
     async function fetchPosts() {
         if (!db) return;
@@ -27,17 +39,24 @@ export default function AdminBlogPage() {
         fetchPosts();
     }, []);
 
-    const handleDelete = async (id: string) => {
-        if(confirm("Möchten Sie diesen Beitrag wirklich löschen?")) {
-            if (!db) return;
-            try {
-                await deleteDoc(doc(db, "blogPosts", id));
-                toast({ title: "Erfolg", description: "Blogbeitrag wurde gelöscht." });
-                fetchPosts();
-            } catch (error) {
-                console.error("Error deleting document: ", error);
-                toast({ variant: "destructive", title: "Fehler", description: "Beitrag konnte nicht gelöscht werden." });
-            }
+    const handleDeleteClick = (id: string) => {
+        setPostToDelete(id);
+        setShowDeleteDialog(true);
+    };
+
+    const handleDelete = async () => {
+        if (!postToDelete || !db) return;
+        
+        try {
+            await deleteDoc(doc(db, "blogPosts", postToDelete));
+            toast({ title: "Erfolg", description: "Blogbeitrag wurde gelöscht." });
+            fetchPosts();
+        } catch (error) {
+            console.error("Error deleting document: ", error);
+            toast({ variant: "destructive", title: "Fehler", description: "Beitrag konnte nicht gelöscht werden." });
+        } finally {
+            setShowDeleteDialog(false);
+            setPostToDelete(null);
         }
     }
 
@@ -67,13 +86,28 @@ export default function AdminBlogPage() {
                                 <Edit className="h-4 w-4" />
                             </Link>
                         </Button>
-                        <Button variant="destructive" size="icon" onClick={() => handleDelete(post.id)}>
+                        <Button variant="destructive" size="icon" onClick={() => handleDeleteClick(post.id)}>
                             <Trash2 className="h-4 w-4" />
                         </Button>
                     </CardFooter>
                 </Card>
             ))}
         </div>
+
+        <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Sind Sie sicher?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        Möchten Sie diesen Blogbeitrag wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => setPostToDelete(null)}>Abbrechen</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete}>Löschen</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     </div>
   );
 }

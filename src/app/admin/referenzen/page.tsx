@@ -9,12 +9,24 @@ import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { Reference } from '@/config/references';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type ReferenceWithId = Reference & { id: string };
 
 export default function AdminReferencesPage() {
     const [references, setReferences] = useState<ReferenceWithId[]>([]);
     const { toast } = useToast();
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [refToDelete, setRefToDelete] = useState<string | null>(null);
 
     async function fetchReferences() {
         if (!db) return;
@@ -27,17 +39,24 @@ export default function AdminReferencesPage() {
         fetchReferences();
     }, []);
 
-    const handleDelete = async (id: string) => {
-        if(confirm("Möchten Sie diese Referenz wirklich löschen?")) {
-            if (!db) return;
-            try {
-                await deleteDoc(doc(db, "references", id));
-                toast({ title: "Erfolg", description: "Referenz wurde gelöscht." });
-                fetchReferences();
-            } catch (error) {
-                console.error("Error deleting document: ", error);
-                toast({ variant: "destructive", title: "Fehler", description: "Referenz konnte nicht gelöscht werden." });
-            }
+    const handleDeleteClick = (id: string) => {
+        setRefToDelete(id);
+        setShowDeleteDialog(true);
+    };
+
+    const handleDelete = async () => {
+        if (!refToDelete || !db) return;
+
+        try {
+            await deleteDoc(doc(db, "references", refToDelete));
+            toast({ title: "Erfolg", description: "Referenz wurde gelöscht." });
+            fetchReferences();
+        } catch (error) {
+            console.error("Error deleting document: ", error);
+            toast({ variant: "destructive", title: "Fehler", description: "Referenz konnte nicht gelöscht werden." });
+        } finally {
+            setShowDeleteDialog(false);
+            setRefToDelete(null);
         }
     }
 
@@ -67,13 +86,28 @@ export default function AdminReferencesPage() {
                                 <Edit className="h-4 w-4" />
                             </Link>
                         </Button>
-                        <Button variant="destructive" size="icon" onClick={() => handleDelete(ref.id)}>
+                        <Button variant="destructive" size="icon" onClick={() => handleDeleteClick(ref.id)}>
                             <Trash2 className="h-4 w-4" />
                         </Button>
                     </CardFooter>
                 </Card>
             ))}
         </div>
+
+        <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Sind Sie sicher?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        Möchten Sie diese Referenz wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => setRefToDelete(null)}>Abbrechen</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete}>Löschen</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     </div>
   );
 }
