@@ -46,7 +46,7 @@ const techCategories = [
 
 export default function TechPage() {
   return (
-    <div className="container mx-auto px-4 py-16 md:py-24">
+    <div className="container mx-auto px-10 py-16 md:py-24">
       <motion.header 
         className="text-center mb-12 md:mb-16"
         initial={{ opacity: 0, y: 20 }}

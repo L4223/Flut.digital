@@ -28,7 +28,7 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
     const { Icon } = service;
 
     return (
-        <div className="container mx-auto px-4 py-16 md:py-24">
+        <div className="container mx-auto px-10 py-16 md:py-24">
             <div className="relative isolate py-8">
                 <div className="absolute inset-0 radial-glow -z-10" />
                 <header className="text-center mb-12 md:mb-20 max-w-4xl mx-auto">
