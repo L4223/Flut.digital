@@ -61,7 +61,7 @@ const PointCloudAnimation = () => {
         size: 0.05,
         color: new THREE.Color(0x1C91FF), // Primary color
         transparent: true,
-        opacity: 0.9,
+        opacity: 1,
         blending: THREE.AdditiveBlending,
         map: particleTexture,
         alphaTest: 0.5,

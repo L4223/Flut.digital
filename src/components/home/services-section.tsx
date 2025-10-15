@@ -36,7 +36,7 @@ export default function ServicesSection() {
         </p>
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {services.slice(0, 6).map((service, i) => {
+        {services.slice(0, 3).map((service, i) => {
           const { Icon } = service;
           return (
             <motion.div
