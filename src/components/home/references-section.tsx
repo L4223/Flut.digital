@@ -1,5 +1,6 @@
 
 "use client"
+import { useState, useEffect } from 'react';
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
@@ -7,11 +8,26 @@ import Image from "next/image";
 import { Badge } from "../ui/badge";
 import CtaButton from "../cta-button";
 import { motion } from "framer-motion";
-import { references } from "@/config/references";
+import { collection, getDocs, limit, query } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { Reference } from "@/config/references";
 
-const featuredReferences = references.slice(0, 4);
+type ReferenceWithId = Reference & { id: string };
 
 export default function ReferencesSection() {
+    const [featuredReferences, setFeaturedReferences] = useState<ReferenceWithId[]>([]);
+
+    useEffect(() => {
+        const fetchReferences = async () => {
+            if (!db) return;
+            const q = query(collection(db, "references"), limit(4));
+            const querySnapshot = await getDocs(q);
+            const refsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ReferenceWithId));
+            setFeaturedReferences(refsData);
+        };
+        fetchReferences();
+    }, []);
+
     return (
         <motion.section
             initial={{ opacity: 0, y: 20 }}
@@ -29,13 +45,13 @@ export default function ReferencesSection() {
             </div>
             
             <div className="overflow-x-clip">
-              <Carousel opts={{ loop: true }} className="w-full">
+              <Carousel opts={{ loop: featuredReferences.length > 1 }} className="w-full">
                   <CarouselContent>
-                      {featuredReferences.map((ref, index) => (
-                          <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-                              <div className="p-1">
-                                  <Link href={`/referenzen/${ref.slug}`} className="group">
-                                      <Card className="overflow-hidden h-full">
+                      {featuredReferences.map((ref) => (
+                          <CarouselItem key={ref.id} className="md:basis-1/2 lg:basis-1/3">
+                              <div className="p-1 h-full">
+                                  <Link href={`/referenzen/${ref.slug}`} className="group flex h-full">
+                                      <Card className="overflow-hidden h-full w-full">
                                           <CardHeader className="p-0 relative">
                                               <div className="aspect-video overflow-hidden">
                                                    <Image
