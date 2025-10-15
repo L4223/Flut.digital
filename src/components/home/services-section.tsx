@@ -1,10 +1,10 @@
-
 "use client"
 import Link from "next/link";
 import { services } from "@/config/services";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import CtaButton from "../cta-button";
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -67,6 +67,11 @@ export default function ServicesSection() {
           );
         })}
       </div>
+       <div className="mt-12 text-center">
+            <CtaButton variant="outline" asChild>
+                <Link href="/leistungen">Alle Leistungen ansehen</Link>
+            </CtaButton>
+        </div>
     </motion.section>
   );
 }
