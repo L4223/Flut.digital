@@ -3,6 +3,7 @@
 import CtaButton from "@/components/cta-button";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 
 export default function CtaSection() {
     return (
@@ -21,9 +22,11 @@ export default function CtaSection() {
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
                     Lassen Sie uns gemeinsam herausfinden, wie wir Ihr Unternehmen mit einer maßgeschneiderten digitalen Lösung voranbringen können.
                 </p>
+
                 <CtaButton asChild size="lg">
                     <Link href="/kontakt">
-                        Kostenloses Erstgespräch anfordern
+                        Projekt starten
+                        <ArrowRight className="ml-2"/>
                     </Link>
                 </CtaButton>
             </div>
