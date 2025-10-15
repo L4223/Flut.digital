@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
@@ -55,6 +55,7 @@ export default function NewReferencePage() {
       await addDoc(collection(db, "references"), {
         ...values,
         features: values.features.split(',').map(f => f.trim()),
+        createdAt: serverTimestamp(),
       });
       toast({
         title: "Erfolgreich gespeichert!",
