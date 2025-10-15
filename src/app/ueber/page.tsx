@@ -30,7 +30,7 @@ const cardVariants = {
 
 export default function UeberPage() {
   return (
-    <div className="container mx-auto px-10 py-16 md:py-24 space-y-24 md:space-y-32">
+    <div className="container mx-auto px-8 py-16 md:py-24 space-y-24 md:space-y-32">
       <motion.header 
         className="text-center max-w-4xl mx-auto"
         initial={{ opacity: 0, y: 20 }}

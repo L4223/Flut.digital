@@ -5,7 +5,7 @@ import { Calendar, Clock, Mail, MapPin } from "lucide-react";
 
 export default function KontaktPage() {
   return (
-    <div className="container mx-auto max-w-6xl px-10 py-16 md:py-24">
+    <div className="container mx-auto max-w-6xl px-8 py-16 md:py-24">
       <header className="text-center mb-12 md:mb-16">
         <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-4">Kontakt aufnehmen</h1>
         <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
