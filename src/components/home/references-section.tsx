@@ -19,11 +19,31 @@ export default function ReferencesSection() {
     useEffect(() => {
         const fetchReferences = async () => {
             if (!db) return;
+            // Query for the latest reference based on createdAt timestamp
             const q = query(collection(db, "references"), orderBy("createdAt", "desc"), limit(1));
-            const querySnapshot = await getDocs(q);
-            if (!querySnapshot.empty) {
-                const refData = { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() } as ReferenceWithId;
-                setLatestReference(refData);
+            try {
+                const querySnapshot = await getDocs(q);
+                if (!querySnapshot.empty) {
+                    const refData = { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() } as ReferenceWithId;
+                    setLatestReference(refData);
+                } else {
+                    // Fallback: If no document has 'createdAt', just get one document
+                    const fallbackQuery = query(collection(db, "references"), limit(1));
+                    const fallbackSnapshot = await getDocs(fallbackQuery);
+                    if(!fallbackSnapshot.empty){
+                        const refData = { id: fallbackSnapshot.docs[0].id, ...fallbackSnapshot.docs[0].data() } as ReferenceWithId;
+                        setLatestReference(refData);
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching latest reference, trying fallback:", error);
+                // Fallback in case of error (e.g. index not ready)
+                const fallbackQuery = query(collection(db, "references"), limit(1));
+                const fallbackSnapshot = await getDocs(fallbackQuery);
+                if(!fallbackSnapshot.empty){
+                    const refData = { id: fallbackSnapshot.docs[0].id, ...fallbackSnapshot.docs[0].data() } as ReferenceWithId;
+                    setLatestReference(refData);
+                }
             }
         };
         fetchReferences();
@@ -73,7 +93,7 @@ export default function ReferencesSection() {
                     </Link>
                 </div>
               ) : (
-                <p className="text-muted-foreground">Aktuell wird das neuste Projekt geladen...</p>
+                <p className="text-muted-foreground">Aktuell wird das neuste Projekt geladen oder es sind keine Projekte vorhanden.</p>
               )}
             </div>
             <div className="mt-12 text-center">
