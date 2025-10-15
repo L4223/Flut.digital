@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useRef, useState } from 'react';
@@ -37,9 +38,9 @@ const PointCloudAnimation = () => {
 
     // Point Cloud Geometry
     const particlesGeometry = new THREE.BufferGeometry();
-    const count = 20000;
+    const count = 10000;
     const positions = new Float32Array(count * 3);
-    const grid_size = 30;
+    const grid_size = 25;
 
     for(let i = 0; i < count * 3; i++) {
         const i3 = i * 3;
@@ -50,13 +51,20 @@ const PointCloudAnimation = () => {
 
     particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
+    // Create a circular texture for the points
+    const textureLoader = new THREE.TextureLoader();
+    const particleTexture = textureLoader.load('data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="white"/></svg>'));
+
+
     // Material
     const particlesMaterial = new THREE.PointsMaterial({
-        size: 0.03,
+        size: 0.05,
         color: new THREE.Color(0x1C91FF), // Primary color
         transparent: true,
-        opacity: 0.7,
+        opacity: 0.9,
         blending: THREE.AdditiveBlending,
+        map: particleTexture,
+        alphaTest: 0.5,
     });
     
     // Points
