@@ -73,7 +73,9 @@ const PointCloudAnimation = () => {
 
     // Animation loop
     const clock = new THREE.Clock();
+    let animationFrameId: number;
     const animate = () => {
+      animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
       
       // Animate particles to form a wave
@@ -92,7 +94,6 @@ const PointCloudAnimation = () => {
       particles.rotation.y = elapsedTime * 0.05;
       
       newRenderer.render(scene, camera);
-      requestAnimationFrame(animate);
     };
     animate();
 
@@ -107,6 +108,7 @@ const PointCloudAnimation = () => {
     // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animationFrameId);
       if (currentMount && newRenderer.domElement.parentNode === currentMount) {
         currentMount.removeChild(newRenderer.domElement);
       }
