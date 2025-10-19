@@ -10,7 +10,7 @@ const teamMembers = [
   {
     name: "Lasse Knodt",
     role: "CEO & Lead Developer",
-    imageUrl: "https://s3.eu-north-1.amazonaws.com/flut.digital1/profilbild.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIA4AQ3ULQFIYIRMPI6%2F20251007%2Feu-north-1%2Fs3%2Faws4_request&X-Amz-Date=20251007T150406Z&X-Amz-Expires=300&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEA8aCmV1LW5vcnRoLTEiSDBGAiEA%2BKK2dTD7HuRKnXew12h99qmcmcUhDjA%2FdwK%2FpsaKciACIQCmx9ipyxvPiQy1vZF4z%2FVwkhtPQmYOOENVD77bWAJm4irjAgio%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAAaDDgyNTc2NTQyMDA0MiIM%2BbtIgQGfVAclzI1yKrcCeUPxIakpxCcTrArAs0LnNowXjCt3VPB0gDGu3c5w68RMFoIVAbkbQLA7zUnDms7e9CItbsiNha2pI0M4CMuYM2MrlU5aOcP6YxUBfsuhmpEYagZbc%2FxhyOOXgJfIyJn1gIUj95whdUj9I49p%2FZiQnnY97J0zzh%2Bm%2FN1Nv7RHwEcYt035E5283ddn6O3O8A6DiMsULU7ZfOjes2f8AG4hInKKza5vweB%2FMGjpENXdjxtywahep2%2BGjGT9zvAcYYJ6atwYFHzSPkYf9MmSJsKsqHRwW92ZM6jw0OqSpEGwfq58YHC8l7Vt0LRpunyA90BlbaI8hO9ULLv%2FiwrGuqJl10WsH8ido%2B4n1xu4axexhtYSaPoit%2FguhuAh45%2F8M8kBxfKpEZ4IEF1aQWeuPVWVOKTCpOUv9kswitSUxwY6rAKoJbAU%2BCg5bVpt7KrxdpoM2zOIIpx3Y39nJz3rb2FURLjw74p4N97qP4sWdtOcwyusCUQy3LHVqGLG0GaVrIGoBCgW9cP1mudtzaNiuZKu24cue5UZRUdJzMYRdMyS%2BU1R%2BwrGlF3wGBOfVxYWHQZYMpKGyZr0K0eyCUff9FiG2vAI%2FbrbE3yrxOSydmB%2F43ni7BIkIPaqZvog3VWWG%2FhgwLdZXwDjZwXksPfYWoeKo5ZYf1SGqAagSk6Mj8%2FCm6v22NB0NS%2FbLq3q53bUlB6BbbU85LvHYBIX6tZmFKvMr0Lr0Q8QE2ED80E4J2kSzLZkXj4suOKLhJV4FtyTvHlYdel5PEi%2BlmM9pvhcteLYyNDXYnZNpz3eNBEj6mnTaWv4dMvIrOUo3a5%2BNsw%3D&X-Amz-Signature=5d3ba97b4dfc45af37b900c98c571309285cee407f93050e401d6201c83e1514&X-Amz-SignedHeaders=host&response-content-disposition=inline",
+    imageUrl: "https://i.ibb.co/d4xZ0j3/profilbild-1.png",
     imageHint: "professional portrait"
   },
 ]
