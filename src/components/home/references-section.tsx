@@ -62,15 +62,15 @@ export default function ReferencesSection() {
                 </p>
             </div>
             
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-8">
               {latestReferences.length > 0 ? (
-                latestReferences.map(ref => (
+                latestReferences.map((ref, index) => (
                     <motion.div
                         key={ref.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="h-full"
+                        className={`h-full ${index === 2 ? 'hidden lg:block' : ''}`}
                     >
                         <Link href={`/referenzen/${ref.slug}`} className="group flex h-full">
                             <Card className="overflow-hidden h-full w-full transition-all duration-300 group-hover:border-primary group-hover:shadow-2xl group-hover:shadow-primary/10">
