@@ -57,6 +57,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
                 <div className="aspect-video overflow-hidden rounded-lg mb-8">
                      <Image
+                        unoptimized
                         src={post.imageUrl}
                         alt={post.title}
                         width={1200}

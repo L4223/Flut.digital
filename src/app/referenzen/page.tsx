@@ -63,6 +63,7 @@ export default function ReferenzenPage() {
                 <CardHeader className="p-0 relative">
                   <div className="aspect-video overflow-hidden">
                     <Image
+                      unoptimized
                       src={ref.imageUrl}
                       alt={ref.title}
                       width={600}

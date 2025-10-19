@@ -71,6 +71,7 @@ export default function ReferenceDetailPage({ params }: { params: { slug: string
                 
                 <div className="mb-12 md:mb-16">
                     <Image
+                        unoptimized
                         src={reference.imageUrl}
                         alt={reference.title}
                         width={1200}

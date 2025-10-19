@@ -10,7 +10,7 @@ const teamMembers = [
   {
     name: "Lasse Knodt",
     role: "CEO & Lead Developer",
-    imageUrl: "https://i.ibb.co/d4xZ0j33/profilbild-1.png",
+    imageUrl: "https://i.ibb.co/d4xZ3j3/profilbild-1.png",
     imageHint: "professional portrait"
   },
 ]
@@ -93,6 +93,7 @@ export default function UeberPage() {
             >
               <div className="relative w-32 h-32 md:w-40 md:h-40 mx-auto mb-4">
                 <Image
+                  unoptimized
                   src={member.imageUrl}
                   alt={member.name}
                   width={400}

@@ -62,6 +62,7 @@ export default function BlogPage() {
                 <CardHeader className="p-0">
                   <div className="aspect-video overflow-hidden">
                     <Image
+                      unoptimized
                       src={post.imageUrl}
                       alt={post.title}
                       width={800}
