@@ -10,7 +10,7 @@ const teamMembers = [
   {
     name: "Lasse Knodt",
     role: "CEO & Lead Developer",
-    imageUrl: "https://i.ibb.co/d4xZ0j3/profilbild-1.png",
+    imageUrl: "https://i.ibb.co/d4xZ0j33/profilbild-1.png",
     imageHint: "professional portrait"
   },
 ]
