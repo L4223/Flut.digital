@@ -14,7 +14,7 @@ const CtaButton = React.forwardRef<HTMLButtonElement, CtaButtonProps>(
       <Comp
         className={cn(
           buttonVariants({ size }), // Inherit base button styles like flex, gap, etc.
-          "p-2 pl-4 pr-4 rounded-sm brand-gradient text-primary-foreground font-bold shadow-lg shadow-primary/20 transition-all duration-300 hover:shadow-xl hover:shadow-accent/30 hover:scale-105",
+          "p-2 pl-4 pr-4 rounded-sm brand-gradient text-primary-foreground font-bold shadow-lg shadow-primary/20 transition-all duration-300 hover:shadow-xl hover:shadow-accent/30",
           className
         )}
         ref={ref}
