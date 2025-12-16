@@ -44,7 +44,7 @@ const HeroWaveAnimation = () => {
     
     const mouse = new THREE.Vector2(-1, -1);
     const raycaster = new THREE.Raycaster();
-    raycaster.params.Points.threshold = 0.2; // Adjust threshold for easier intersection
+    raycaster.params.Points.threshold = 0.2;
 
     const handleMouseMove = (event: MouseEvent) => {
         const rect = renderer.domElement.getBoundingClientRect();
@@ -62,20 +62,20 @@ const HeroWaveAnimation = () => {
 
       for (let i = 0; i < pos.count; i++) {
         const originalX = originalPos.getX(i);
-        const originalY = originalPos.getY(i);
+        const originalZ = originalPos.getZ(i);
 
-        const noise = 0.3 * simplex.noise(originalX / 2 + t * rotationSpeed, originalY / 2 + t * rotationSpeed);
+        const noise = 0.3 * simplex.noise(originalX / 2 + t * rotationSpeed, originalZ / 2 + t * rotationSpeed);
         
-        let z = noise;
+        let y = noise;
         
         const currentX = displacedPos.getX(i);
         const currentY = displacedPos.getY(i);
         displacedPos.setX(i, currentX + (originalX - currentX) * 0.05);
-        displacedPos.setY(i, currentY + (originalY - currentY) * 0.05);
+        displacedPos.setY(i, currentY + (originalZ - currentY) * 0.05);
 
         pos.setX(i, displacedPos.getX(i));
         pos.setY(i, displacedPos.getY(i));
-        pos.setZ(i, z);
+        pos.setZ(i, y);
       }
       
       if (intersects.length > 0) {
@@ -85,7 +85,8 @@ const HeroWaveAnimation = () => {
 
         for (let i = 0; i < pos.count; i++) {
           const dx = pos.getX(i) - intersectPoint.x;
-          const dy = pos.getY(i) - intersectPoint.z;
+          // Because the plane is rotated, the visual "depth" is the y-axis of the geometry
+          const dy = pos.getY(i) - intersectPoint.z; 
           const dz = pos.getZ(i) - intersectPoint.y;
           const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
           
