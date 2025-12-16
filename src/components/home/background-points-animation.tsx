@@ -4,7 +4,7 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-const PointCloudAnimation = () => {
+const BackgroundPointsAnimation = () => {
   const mountRef = useRef<HTMLDivElement>(null);
   const animationFrameId = useRef<number>();
 
@@ -13,82 +13,44 @@ const PointCloudAnimation = () => {
 
     const currentMount = mountRef.current;
     
-    // Scene
     const scene = new THREE.Scene();
 
-    // Camera
     const camera = new THREE.PerspectiveCamera(75, currentMount.clientWidth / currentMount.clientHeight, 0.1, 1000);
-    camera.position.set(0, 2, 5); 
-    camera.lookAt(0,0,0);
+    camera.position.z = 5;
 
-    // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     currentMount.appendChild(renderer.domElement);
 
-    // Point Cloud Geometry (as a plane)
     const particlesGeometry = new THREE.BufferGeometry();
-    const count = 10000;
+    const count = 5000;
     const positions = new Float32Array(count * 3);
-    const plane_size = 20;
 
     for(let i = 0; i < count; i++) {
         const i3 = i * 3;
-        positions[i3 + 0] = (Math.random() - 0.5) * plane_size; // x on a plane
-        positions[i3 + 1] = 0; // y is 0 to form a plane
-        positions[i3 + 2] = (Math.random() - 0.5) * plane_size; // z on a plane
+        positions[i3 + 0] = (Math.random() - 0.5) * 30;
+        positions[i3 + 1] = (Math.random() - 0.5) * 30;
+        positions[i3 + 2] = (Math.random() - 0.5) * 30;
     }
     particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-
-    // Create a circular texture for the points
     const textureLoader = new THREE.TextureLoader();
     const particleTexture = textureLoader.load('data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="white"/></svg>'));
 
-    // Material
-     const particlesMaterial = new THREE.ShaderMaterial({
-        vertexShader: `
-            uniform float uTime;
-            
-            void main() {
-                vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-                
-                // Sea-like wave
-                modelPosition.y += sin(modelPosition.x * 0.4 + uTime * 0.5) * 0.35;
-                modelPosition.y += sin(modelPosition.z * 0.5 + uTime * 0.3) * 0.35;
-                
-                vec4 viewPosition = viewMatrix * modelPosition;
-                vec4 projectedPosition = projectionMatrix * viewPosition;
-
-                gl_Position = projectedPosition;
-                gl_PointSize = 8.0 * (1.0 / -viewPosition.z);
-            }
-        `,
-        fragmentShader: `
-            uniform vec3 uColor;
-            uniform sampler2D uTexture;
-            void main() {
-                vec4 texColor = texture2D(uTexture, gl_PointCoord);
-                gl_FragColor = vec4(uColor, texColor.r * 0.8);
-            }
-        `,
-        uniforms: {
-            uTime: { value: 0 },
-            uColor: { value: new THREE.Color(0x1C91FF) },
-            uTexture: { value: particleTexture }
-        },
+    const particlesMaterial = new THREE.PointsMaterial({
+        color: 0x1C91FF,
+        size: 0.05,
+        map: particleTexture,
         transparent: true,
         blending: THREE.AdditiveBlending,
         depthWrite: false,
+        opacity: 0.5
     });
     
-    // Points
     const particles = new THREE.Points(particlesGeometry, particlesMaterial);
-    particles.rotation.x = -0.2; // Slightly tilt the plane for better view
     scene.add(particles);
-    
-    // Mouse movement
+
     const mouse = new THREE.Vector2();
     const handleMouseMove = (event: MouseEvent) => {
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -96,18 +58,17 @@ const PointCloudAnimation = () => {
     };
     window.addEventListener('mousemove', handleMouseMove);
     
-    // Animation loop
     const clock = new THREE.Clock();
     
     const animate = () => {
       animationFrameId.current = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
       
-      particlesMaterial.uniforms.uTime.value = elapsedTime;
+      particles.rotation.y = elapsedTime * 0.05;
+      particles.rotation.x = elapsedTime * 0.02;
 
-      // Make camera gently follow mouse
-      camera.position.x += (mouse.x * 0.2 - camera.position.x) * 0.02;
-      camera.position.y += (-mouse.y * 0.2 - (camera.position.y - 2.0)) * 0.02;
+      camera.position.x += (mouse.x * 0.5 - camera.position.x) * 0.02;
+      camera.position.y += (-mouse.y * 0.5 - camera.position.y) * 0.02;
       camera.lookAt(scene.position);
       
       renderer.render(scene, camera);
@@ -115,7 +76,6 @@ const PointCloudAnimation = () => {
     
     animate();
 
-    // Handle resize
     const handleResize = () => {
       if (currentMount) {
         camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
@@ -126,7 +86,6 @@ const PointCloudAnimation = () => {
     };
     window.addEventListener('resize', handleResize);
 
-    // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
@@ -142,7 +101,7 @@ const PointCloudAnimation = () => {
     };
   }, []);
 
-  return <div ref={mountRef} className="fixed inset-0 -z-10 opacity-70" />;
+  return <div ref={mountRef} className="fixed inset-0 -z-20 opacity-20" />;
 };
 
-export default PointCloudAnimation;
+export default BackgroundPointsAnimation;
