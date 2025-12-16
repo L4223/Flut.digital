@@ -36,21 +36,20 @@ const HeroWaveAnimation = () => {
     scene.add(waves);
     
     const pos = waves.geometry.getAttribute('position');
-    const originalPos = pos.clone(); // Store original positions
-    const displacedPos = pos.clone(); // For animation calculations
+    const originalPos = pos.clone();
+    const displacedPos = pos.clone();
 
     const clock = new THREE.Clock();
     const rotationSpeed = 0.1;
-
-    // Mouse interaction setup
-    const mouse = new THREE.Vector2(-10, -10); // Start off-screen
+    
+    const mouse = new THREE.Vector2(-1, -1);
     const raycaster = new THREE.Raycaster();
-    const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-    const intersectPoint = new THREE.Vector3();
+    raycaster.params.Points.threshold = 0.2; // Adjust threshold for easier intersection
 
     const handleMouseMove = (event: MouseEvent) => {
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
     };
     window.addEventListener('mousemove', handleMouseMove, false);
     
@@ -59,46 +58,51 @@ const HeroWaveAnimation = () => {
       const t = clock.getElapsedTime();
 
       raycaster.setFromCamera(mouse, camera);
-      raycaster.ray.intersectPlane(plane, intersectPoint);
-      
+      const intersects = raycaster.intersectObject(waves);
+
       for (let i = 0; i < pos.count; i++) {
         const originalX = originalPos.getX(i);
         const originalY = originalPos.getY(i);
 
-        // Base wave noise
         const noise = 0.3 * simplex.noise(originalX / 2 + t * rotationSpeed, originalY / 2 + t * rotationSpeed);
         
         let z = noise;
-
-        // Animate back to original position slowly
+        
         const currentX = displacedPos.getX(i);
         const currentY = displacedPos.getY(i);
         displacedPos.setX(i, currentX + (originalX - currentX) * 0.05);
         displacedPos.setY(i, currentY + (originalY - currentY) * 0.05);
 
-        // Mouse interaction effect
-        const dx = displacedPos.getX(i) - intersectPoint.x;
-        const dy = displacedPos.getY(i) - intersectPoint.z;
-        const dz = z - intersectPoint.y;
-        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        
-        const radius = 2.0;
-        const force = -0.3;
-
-        if (dist < radius) {
-            const factor = (1 - dist / radius);
-            const angle = Math.atan2(dy, dx);
-            
-            const displacement = factor * force * -0.1;
-
-            displacedPos.setX(i, displacedPos.getX(i) + Math.cos(angle) * displacement);
-            displacedPos.setY(i, displacedPos.getY(i) + Math.sin(angle) * displacement);
-        }
-        
         pos.setX(i, displacedPos.getX(i));
         pos.setY(i, displacedPos.getY(i));
         pos.setZ(i, z);
       }
+      
+      if (intersects.length > 0) {
+        const intersectPoint = intersects[0].point;
+        const radius = 2.0;
+        const force = -0.3;
+
+        for (let i = 0; i < pos.count; i++) {
+          const dx = pos.getX(i) - intersectPoint.x;
+          const dy = pos.getY(i) - intersectPoint.z;
+          const dz = pos.getZ(i) - intersectPoint.y;
+          const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+          
+          if (dist < radius) {
+            const factor = (1 - dist / radius);
+            const angle = Math.atan2(dy, dx);
+            const displacement = factor * force * -0.1;
+            
+            displacedPos.setX(i, pos.getX(i) + Math.cos(angle) * displacement);
+            displacedPos.setY(i, pos.getY(i) + Math.sin(angle) * displacement);
+
+            pos.setX(i, displacedPos.getX(i));
+            pos.setY(i, displacedPos.getY(i));
+          }
+        }
+      }
+
       pos.needsUpdate = true;
       
       renderer.render(scene, camera);
