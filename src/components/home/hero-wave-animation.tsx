@@ -49,7 +49,7 @@ const HeroWaveAnimation = () => {
     const handleMouseMove = (event: MouseEvent) => {
         const rect = renderer.domElement.getBoundingClientRect();
         mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        mouse.y = ((event.clientY - rect.top) / rect.height) * 2 - 1; // Inverted Y-axis fixed
     };
     window.addEventListener('mousemove', handleMouseMove, false);
     
@@ -65,36 +65,35 @@ const HeroWaveAnimation = () => {
 
       for (let i = 0; i < pos.count; i++) {
         const originalX = originalPos.getX(i);
-        const originalY = originalPos.getY(i);
+        const originalZ = originalPos.getZ(i); // This is the original vertical position
         
         // 1. Calculate wave animation
-        const waveZ = 0.3 * simplex.noise(originalX / 2 + t * rotationSpeed, originalY / 2 + t * rotationSpeed);
+        const waveY = 0.3 * simplex.noise(originalX / 2 + t * rotationSpeed, originalZ / 2 + t * rotationSpeed);
         
         const currentVec = new THREE.Vector3(pos.getX(i), pos.getY(i), pos.getZ(i));
-        const waveVec = new THREE.Vector3(originalX, originalY, waveZ);
-
+        
         // 2. Calculate mouse interaction
         let displacement = new THREE.Vector3(0,0,0);
         if(mouseWorldPos) {
             const dx = originalX - mouseWorldPos.x;
-            const dy = originalY - mouseWorldPos.z; // Plane is rotated, so world z is plane y
-            const dist = Math.sqrt(dx * dx + dy * dy);
+            const dz = originalZ - mouseWorldPos.z;
+            const dist = Math.sqrt(dx * dx + dz * dz);
 
             if (dist < radius) {
-                const angle = Math.atan2(dy, dx);
+                const angle = Math.atan2(dz, dx);
                 const factor = (1 - dist / radius);
                 const displacementAmount = factor * force;
                 
                 displacement.x = Math.cos(angle) * displacementAmount;
-                displacement.y = Math.sin(angle) * displacementAmount;
+                displacement.z = Math.sin(angle) * displacementAmount;
             }
         }
         
         // 3. Combine wave and interaction, and smoothly return to original
         const targetVec = new THREE.Vector3(
-          waveVec.x + displacement.x,
-          waveVec.y + displacement.y,
-          waveVec.z
+          originalX + displacement.x,
+          waveY,
+          originalZ + displacement.z
         );
 
         // Lerp towards the target position
