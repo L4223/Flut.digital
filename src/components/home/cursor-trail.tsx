@@ -66,8 +66,8 @@ const CursorTrail = () => {
       }
       if (dotOutlineRef.current) {
         // Apply offset to better center the cursor tip
-        const offsetX = 12.5; // Half of width
-        const offsetY = 12.5; // Half of height
+        const offsetX = 10.5; // Half of width, adjusted
+        const offsetY = 10.5; // Half of height, adjusted
         dotOutlineRef.current.style.transform = `translate(${previousMousePos.current.x - offsetX}px, ${previousMousePos.current.y - offsetY}px)`;
         
         // Scale effect on hover
