@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 const PointCloudAnimation = () => {
   const mountRef = useRef<HTMLDivElement>(null);
-  const [renderer, setRenderer] = useState<THREE.WebGLRenderer | null>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined' || !mountRef.current) return;
@@ -22,19 +22,15 @@ const PointCloudAnimation = () => {
     camera.position.y = 2;
     camera.rotation.x = -0.3;
 
-
     // Renderer
-    let newRenderer: THREE.WebGLRenderer;
-    if (renderer) {
-        newRenderer = renderer;
-    } else {
-        newRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        setRenderer(newRenderer);
+    if (!rendererRef.current) {
+        rendererRef.current = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     }
+    const renderer = rendererRef.current;
     
-    newRenderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
-    newRenderer.setPixelRatio(window.devicePixelRatio);
-    currentMount.appendChild(newRenderer.domElement);
+    renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    currentMount.appendChild(renderer.domElement);
 
     // Point Cloud Geometry
     const particlesGeometry = new THREE.BufferGeometry();
@@ -55,7 +51,6 @@ const PointCloudAnimation = () => {
     const textureLoader = new THREE.TextureLoader();
     const particleTexture = textureLoader.load('data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="white"/></svg>'));
 
-
     // Material
     const particlesMaterial = new THREE.PointsMaterial({
         size: 0.05,
@@ -70,6 +65,14 @@ const PointCloudAnimation = () => {
     // Points
     const particles = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particles);
+    
+    // Scroll handling
+    let scrollY = window.scrollY;
+    const handleScroll = () => {
+        scrollY = window.scrollY;
+    };
+    window.addEventListener('scroll', handleScroll);
+
 
     // Animation loop
     const clock = new THREE.Clock();
@@ -80,43 +83,45 @@ const PointCloudAnimation = () => {
       
       // Animate particles to form a wave
       const positions = particles.geometry.attributes.position.array as Float32Array;
-
       for(let i = 0; i < count; i++) {
           const i3 = i * 3;
           const x = positions[i3 + 0];
           const z = positions[i3 + 2];
-          
           positions[i3 + 1] = Math.sin(x * 0.3 + elapsedTime) * 0.75 + Math.sin(z * 0.3 + elapsedTime) * 0.75;
       }
       particles.geometry.attributes.position.needsUpdate = true;
 
+      // Animate camera based on scroll
+      camera.position.y = 2 - scrollY * 0.005;
 
       particles.rotation.y = elapsedTime * 0.05;
       
-      newRenderer.render(scene, camera);
+      renderer.render(scene, camera);
     };
     animate();
 
     // Handle resize
     const handleResize = () => {
-      camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
-      camera.updateProjectionMatrix();
-      newRenderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+      if (currentMount) {
+        camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+      }
     };
     window.addEventListener('resize', handleResize);
 
     // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleScroll);
       cancelAnimationFrame(animationFrameId);
-      if (currentMount && newRenderer.domElement.parentNode === currentMount) {
-        currentMount.removeChild(newRenderer.domElement);
+      if (currentMount && renderer.domElement.parentNode === currentMount) {
+        currentMount.removeChild(renderer.domElement);
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <div ref={mountRef} className="absolute inset-0 z-0 opacity-70" />;
+  return <div ref={mountRef} className="fixed inset-0 -z-10 opacity-70" />;
 };
 
 export default PointCloudAnimation;

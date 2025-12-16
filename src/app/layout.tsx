@@ -11,6 +11,7 @@ import { migrateBlogPostsToFirestore } from '@/config/blog';
 import { migrateReferencesToFirestore } from '@/config/references';
 import CookieBanner from '@/components/layout/cookie-banner';
 import { hasApiKey } from '@/lib/firebase';
+import PointCloudAnimation from '@/components/home/hero-animation';
 
 export default function RootLayout({
   children,
@@ -20,6 +21,7 @@ export default function RootLayout({
   const pathname = usePathname();
   const isAdminPage = pathname.startsWith('/admin');
   const isLoginPage = pathname === '/login';
+  const isHomePage = pathname === '/';
 
   useEffect(() => {
     // This is a one-time migration script.
@@ -54,6 +56,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased flex flex-col min-h-screen">
+        {isHomePage && <PointCloudAnimation />}
         <Header />
         <main className="flex-grow">{children}</main>
         <Footer />
