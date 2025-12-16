@@ -18,9 +18,11 @@ const CursorTrail = () => {
     mousePos.current.x = event.clientX;
     mousePos.current.y = event.clientY;
 
-    isMoving.current = true;
-    if (dotRef.current) {
-      dotRef.current.style.opacity = '1';
+    if (!isMoving.current) {
+        isMoving.current = true;
+        if (dotRef.current) {
+            dotRef.current.style.opacity = '1';
+        }
     }
 
     if (timeoutRef.current) {
@@ -63,7 +65,10 @@ const CursorTrail = () => {
         dotRef.current.style.transform = `translate(${mousePos.current.x}px, ${mousePos.current.y}px)`;
       }
       if (dotOutlineRef.current) {
-        dotOutlineRef.current.style.transform = `translate(${previousMousePos.current.x}px, ${previousMousePos.current.y}px)`;
+        // Apply offset to better center the cursor tip
+        const offsetX = 12.5; // Half of width
+        const offsetY = 12.5; // Half of height
+        dotOutlineRef.current.style.transform = `translate(${previousMousePos.current.x - offsetX}px, ${previousMousePos.current.y - offsetY}px)`;
         
         // Scale effect on hover
         const scale = isHoveringLink.current ? 1.8 : 1;
@@ -95,7 +100,7 @@ const CursorTrail = () => {
     <>
       <div 
         ref={dotOutlineRef} 
-        className="fixed top-0 left-0 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transition-[width,height,opacity] duration-300"
+        className="fixed top-0 left-0 rounded-full pointer-events-none transition-[width,height,opacity] duration-300"
         style={{
             zIndex: 9999,
             width: '25px',
