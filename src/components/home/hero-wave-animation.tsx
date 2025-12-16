@@ -70,7 +70,7 @@ const HeroWaveAnimation = () => {
         
         let z = noise;
 
-        // Animate back to original position
+        // Animate back to original position slowly
         const currentX = displacedPos.getX(i);
         const currentY = displacedPos.getY(i);
         displacedPos.setX(i, currentX + (originalX - currentX) * 0.05);
@@ -82,8 +82,8 @@ const HeroWaveAnimation = () => {
         const dy = displacedPos.getY(i) - intersectPoint.z;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        const radius = 1.5;
-        const force = -1.0; 
+        const radius = 2.0; // Increased radius
+        const force = -0.3; // Decreased force
 
         if (dist < radius) {
             const factor = (1 - dist / radius);
