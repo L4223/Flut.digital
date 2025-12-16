@@ -59,13 +59,14 @@ const BackgroundPointsAnimation = () => {
     window.addEventListener('mousemove', handleMouseMove);
     
     const clock = new THREE.Clock();
+    const rotationSpeed = 0.2;
     
     const animate = () => {
       animationFrameId.current = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
       
-      particles.rotation.y = elapsedTime * 0.05;
-      particles.rotation.x = elapsedTime * 0.02;
+      particles.rotation.y = elapsedTime * 0.05 * rotationSpeed;
+      particles.rotation.x = elapsedTime * 0.02 * rotationSpeed;
 
       camera.position.x += (mouse.x * 0.5 - camera.position.x) * 0.02;
       camera.position.y += (-mouse.y * 0.5 - camera.position.y) * 0.02;

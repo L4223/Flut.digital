@@ -38,6 +38,7 @@ const HeroWaveAnimation = () => {
     const pos = waves.geometry.getAttribute('position');
 
     const clock = new THREE.Clock();
+    const rotationSpeed = 0.2; // Hier kannst du die Geschwindigkeit anpassen
     
     const animate = () => {
       animationFrameId.current = requestAnimationFrame(animate);
@@ -46,7 +47,7 @@ const HeroWaveAnimation = () => {
       for (let i = 0; i < pos.count; i++) {
         const x = pos.getX(i);
         const y = pos.getY(i);
-        const z = 0.3 * simplex.noise(x / 2 + t * 0.2, y / 2 + t * 0.2);
+        const z = 0.3 * simplex.noise(x / 2 + t * rotationSpeed, y / 2 + t * rotationSpeed);
         pos.setZ(i, z);
       }
       pos.needsUpdate = true;
