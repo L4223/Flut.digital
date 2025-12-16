@@ -38,16 +38,51 @@ const HeroWaveAnimation = () => {
     const pos = waves.geometry.getAttribute('position');
 
     const clock = new THREE.Clock();
-    const rotationSpeed = 0.2; // Hier kannst du die Geschwindigkeit anpassen
+    const rotationSpeed = 0.1;
+
+    // Mouse interaction setup
+    const mouse = new THREE.Vector2(-10, -10); // Start off-screen
+    const raycaster = new THREE.Raycaster();
+    const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0); // Corresponds to the wave's orientation
+    const intersectPoint = new THREE.Vector3();
+
+    const handleMouseMove = (event: MouseEvent) => {
+        // Normalized device coordinates
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+    };
+    window.addEventListener('mousemove', handleMouseMove, false);
     
     const animate = () => {
       animationFrameId.current = requestAnimationFrame(animate);
       const t = clock.getElapsedTime();
+
+      // Update raycaster
+      raycaster.setFromCamera(mouse, camera);
+      raycaster.ray.intersectPlane(plane, intersectPoint);
       
       for (let i = 0; i < pos.count; i++) {
         const x = pos.getX(i);
         const y = pos.getY(i);
-        const z = 0.3 * simplex.noise(x / 2 + t * rotationSpeed, y / 2 + t * rotationSpeed);
+
+        // Base wave noise
+        const noise = 0.3 * simplex.noise(x / 2 + t * rotationSpeed, y / 2 + t * rotationSpeed);
+        
+        let z = noise;
+
+        // Mouse interaction effect
+        const dx = x - intersectPoint.x;
+        const dy = y - intersectPoint.z; // Plane is rotated, so we use z for y
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        const radius = 1.0;
+        const intensity = -0.5;
+
+        if (dist < radius) {
+            const factor = (1 - dist / radius);
+            z += intensity * factor * factor; // Use factor squared for a smoother falloff
+        }
+        
         pos.setZ(i, z);
       }
       pos.needsUpdate = true;
@@ -69,6 +104,7 @@ const HeroWaveAnimation = () => {
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouseMove);
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
