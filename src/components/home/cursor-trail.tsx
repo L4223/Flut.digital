@@ -2,178 +2,103 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import * as THREE from 'three';
 
 const CursorTrail = () => {
-  const mountRef = useRef<HTMLDivElement>(null);
-  const animationFrameId = useRef<number>();
+  const dotRef = useRef<HTMLDivElement>(null);
+  const dotOutlineRef = useRef<HTMLDivElement>(null);
+  const requestRef = useRef<number>();
+
+  const mousePos = useRef({ x: -100, y: -100 });
+  const previousMousePos = useRef({ x: -100, y: -100 });
+  const isHoveringLink = useRef(false);
+
+  const onMouseMove = (event: MouseEvent) => {
+    mousePos.current.x = event.clientX;
+    mousePos.current.y = event.clientY;
+  };
+
+  const onMouseOver = (event: MouseEvent) => {
+    const target = event.target as HTMLElement;
+    if (target.closest('a, button')) {
+      isHoveringLink.current = true;
+    }
+  };
+  
+  const onMouseOut = (event: MouseEvent) => {
+     const target = event.target as HTMLElement;
+     if (target.closest('a, button')) {
+      isHoveringLink.current = false;
+    }
+  };
 
   useEffect(() => {
-    if (typeof window === 'undefined' || !mountRef.current) return;
-
-    const currentMount = mountRef.current;
-
-    // Scene setup
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 5;
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    currentMount.appendChild(renderer.domElement);
-
-    const mouse = new THREE.Vector2(-10, -10); // Start off-screen
-    const lastMouse = new THREE.Vector2(-10, -10);
-
-    const onMouseMove = (event: MouseEvent) => {
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-    };
-    window.addEventListener('mousemove', onMouseMove);
-
-    // Particle setup
-    const particleCount = 200;
-    const particles: {
-      position: THREE.Vector3;
-      velocity: THREE.Vector3;
-      alpha: number;
-      life: number;
-    }[] = [];
-
-    const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
-    const alphas = new Float32Array(particleCount);
-
-    for (let i = 0; i < particleCount; i++) {
-      particles.push({
-        position: new THREE.Vector3(0, 0, 0),
-        velocity: new THREE.Vector3(0, 0, 0),
-        alpha: 0,
-        life: 0,
-      });
-      positions[i * 3] = 0;
-      positions[i * 3 + 1] = 0;
-      positions[i * 3 + 2] = 0;
-      alphas[i] = 0;
-    }
-
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute('alpha', new THREE.BufferAttribute(alphas, 1));
-
-    const material = new THREE.ShaderMaterial({
-      vertexShader: `
-        attribute float alpha;
-        varying float vAlpha;
-        void main() {
-          vAlpha = alpha;
-          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-          gl_PointSize = 4.0 * (1.0 / -mvPosition.z);
-          gl_Position = projectionMatrix * mvPosition;
-        }
-      `,
-      fragmentShader: `
-        uniform vec3 color;
-        varying float vAlpha;
-        void main() {
-          if (vAlpha <= 0.0) discard;
-          float circle = distance(gl_PointCoord, vec2(0.5, 0.5));
-          if (circle > 0.4) discard;
-          gl_FragColor = vec4(color, vAlpha);
-        }
-      `,
-      uniforms: {
-        color: { value: new THREE.Color(0x40CFFF) }, // Accent color
-      },
-      transparent: true,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-    });
-
-    const particleSystem = new THREE.Points(geometry, material);
-    scene.add(particleSystem);
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseover', onMouseOver);
+    document.addEventListener('mouseout', onMouseOut);
     
-    let particleIndex = 0;
-
     const animate = () => {
-      animationFrameId.current = requestAnimationFrame(animate);
+      // Lerp for smooth following of the outline
+      previousMousePos.current.x += (mousePos.current.x - previousMousePos.current.x) * 0.15;
+      previousMousePos.current.y += (mousePos.current.y - previousMousePos.current.y) * 0.15;
 
-      // Interpolate mouse position for smoother trail
-      lastMouse.lerp(mouse, 0.1);
-
-      // Get 3D position in scene
-      const target = new THREE.Vector3(lastMouse.x, lastMouse.y, 0.5);
-      target.unproject(camera);
-      const dir = target.sub(camera.position).normalize();
-      const distance = -camera.position.z / dir.z;
-      const pos = camera.position.clone().add(dir.multiplyScalar(distance));
-
-
-      // Emit new particles
-      for (let i = 0; i < 3; i++) { // Emit a few particles per frame
-        particleIndex = (particleIndex + 1) % particleCount;
-        const p = particles[particleIndex];
-        p.position.copy(pos);
-        p.velocity.set(
-          (Math.random() - 0.5) * 0.03,
-          (Math.random() - 0.5) * 0.03,
-          0
-        );
-        p.alpha = 1.0;
-        p.life = 1.0;
+      if (dotRef.current) {
+        dotRef.current.style.transform = `translate(${mousePos.current.x}px, ${mousePos.current.y}px)`;
       }
-      
-      // Update particles
-      for (let i = 0; i < particleCount; i++) {
-        const p = particles[i];
-        if (p.life > 0) {
-          p.life -= 0.02;
-          if (p.life <= 0) {
-            p.alpha = 0;
-          } else {
-            p.position.add(p.velocity);
-            p.alpha = p.life;
-          }
-          positions[i * 3] = p.position.x;
-          positions[i * 3 + 1] = p.position.y;
-          positions[i * 3 + 2] = p.position.z;
-          alphas[i] = p.alpha;
-        }
+      if (dotOutlineRef.current) {
+        dotOutlineRef.current.style.transform = `translate(${previousMousePos.current.x}px, ${previousMousePos.current.y}px)`;
+        
+        // Scale effect on hover
+        const scale = isHoveringLink.current ? 1.8 : 1;
+        const opacity = isHoveringLink.current ? 0.5 : 1;
+        dotOutlineRef.current.style.width = `${25 * scale}px`;
+        dotOutlineRef.current.style.height = `${25 * scale}px`;
+        dotOutlineRef.current.style.opacity = `${opacity}`;
       }
 
-      geometry.attributes.position.needsUpdate = true;
-      geometry.attributes.alpha.needsUpdate = true;
-
-      renderer.render(scene, camera);
+      requestRef.current = requestAnimationFrame(animate);
     };
 
-    const handleResize = () => {
-        if (currentMount) {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-    };
-    
-    window.addEventListener('resize', handleResize);
     animate();
 
     return () => {
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('resize', handleResize);
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseover', onMouseOver);
+      document.removeEventListener('mouseout', onMouseOut);
+      if (requestRef.current) {
+        cancelAnimationFrame(requestRef.current);
       }
-      if (currentMount && renderer.domElement.parentNode === currentMount) {
-        currentMount.removeChild(renderer.domElement);
-      }
-      renderer.dispose();
-      geometry.dispose();
-      material.dispose();
     };
   }, []);
 
-  return <div ref={mountRef} className="fixed inset-0 -z-20 pointer-events-none" />;
+  return (
+    <>
+      <div 
+        ref={dotOutlineRef} 
+        className="fixed top-0 left-0 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transition-[width,height,opacity] duration-300"
+        style={{
+            zIndex: 9999,
+            width: '25px',
+            height: '25px',
+            border: '1.5px solid hsl(var(--accent))',
+        }}
+      />
+      <div 
+        ref={dotRef} 
+        className="fixed top-0 left-0 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none"
+        style={{
+            zIndex: 9999,
+            width: '5px',
+            height: '5px',
+            backgroundColor: 'hsl(var(--accent))'
+        }}
+      />
+       <style jsx global>{`
+        *:not(input, textarea) {
+          cursor: none !important;
+        }
+      `}</style>
+    </>
+  );
 };
 
 export default CursorTrail;
