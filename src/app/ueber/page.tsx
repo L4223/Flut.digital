@@ -1,5 +1,4 @@
-
-"use client"
+"use client";
 import Image from "next/image";
 import { Check, Zap, Target } from "lucide-react";
 import CtaButton from "@/components/cta-button";
@@ -10,10 +9,10 @@ const teamMembers = [
   {
     name: "Lasse Knodt",
     role: "CEO & Lead Developer",
-    imageUrl: "https://i.ibb.co/d4xZ3j3/profilbild-1.png",
-    imageHint: "professional portrait"
+    imageUrl: "/images/profilbild-1.png",
+    imageHint: "professional portrait",
   },
-]
+];
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -31,19 +30,23 @@ const cardVariants = {
 export default function UeberPage() {
   return (
     <div className="container mx-auto px-8 py-16 md:py-24 space-y-24 md:space-y-32">
-      <motion.header 
+      <motion.header
         className="text-center max-w-4xl mx-auto"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-6">Wir sind Flut.digital</h1>
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-6">
+          Wir sind Flut.digital
+        </h1>
         <p className="text-lg md:text-xl text-muted-foreground">
-          Eine Digitalagentur, die an der Schnittstelle von Design, Technologie und Strategie agiert, um außergewöhnliche digitale Erlebnisse zu schaffen.
+          Eine Digitalagentur, die an der Schnittstelle von Design, Technologie
+          und Strategie agiert, um außergewöhnliche digitale Erlebnisse zu
+          schaffen.
         </p>
       </motion.header>
 
-      <motion.div 
+      <motion.div
         className="grid md:grid-cols-3 gap-8 text-center"
         initial="hidden"
         whileInView="visible"
@@ -51,39 +54,59 @@ export default function UeberPage() {
         variants={{
           visible: {
             transition: {
-              staggerChildren: 0.1
-            }
-          }
+              staggerChildren: 0.1,
+            },
+          },
         }}
       >
-        <motion.div variants={cardVariants} className="p-8 bg-secondary/50 rounded-lg">
+        <motion.div
+          variants={cardVariants}
+          className="p-8 bg-secondary/50 rounded-lg"
+        >
           <Target className="w-12 h-12 mx-auto mb-4 text-primary" />
           <h3 className="text-xl font-bold mb-2">Unsere Mission</h3>
-          <p className="text-muted-foreground">Innovative Lösungen entwickeln, die echten Mehrwert schaffen und unsere Kunden im digitalen Zeitalter voranbringen.</p>
+          <p className="text-muted-foreground">
+            Innovative Lösungen entwickeln, die echten Mehrwert schaffen und
+            unsere Kunden im digitalen Zeitalter voranbringen.
+          </p>
         </motion.div>
-        <motion.div variants={cardVariants} className="p-8 bg-secondary/50 rounded-lg">
+        <motion.div
+          variants={cardVariants}
+          className="p-8 bg-secondary/50 rounded-lg"
+        >
           <Zap className="w-12 h-12 mx-auto mb-4 text-primary" />
           <h3 className="text-xl font-bold mb-2">Unsere Vision</h3>
-          <p className="text-muted-foreground">Die führende Agentur für anspruchsvolle digitale Transformationen zu sein, die für Qualität und Kreativität bekannt ist.</p>
+          <p className="text-muted-foreground">
+            Die führende Agentur für anspruchsvolle digitale Transformationen zu
+            sein, die für Qualität und Kreativität bekannt ist.
+          </p>
         </motion.div>
-        <motion.div variants={cardVariants} className="p-8 bg-secondary/50 rounded-lg">
+        <motion.div
+          variants={cardVariants}
+          className="p-8 bg-secondary/50 rounded-lg"
+        >
           <Check className="w-12 h-12 mx-auto mb-4 text-primary" />
           <h3 className="text-xl font-bold mb-2">Unsere Werte</h3>
-          <p className="text-muted-foreground">Partnerschaft, Transparenz, Exzellenz und eine unstillbare Neugier treiben uns jeden Tag an.</p>
+          <p className="text-muted-foreground">
+            Partnerschaft, Transparenz, Exzellenz und eine unstillbare Neugier
+            treiben uns jeden Tag an.
+          </p>
         </motion.div>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         className="text-center"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         viewport={{ once: true, amount: 0.3 }}
       >
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tighter mb-12">Das Team</h2>
+        <h2 className="text-3xl md:text-4xl font-bold tracking-tighter mb-12">
+          Das Team
+        </h2>
         <div className="flex justify-center gap-8 md:gap-16">
           {teamMembers.map((member, i) => (
-            <motion.div 
+            <motion.div
               key={member.name}
               custom={i}
               initial="hidden"
@@ -109,22 +132,24 @@ export default function UeberPage() {
         </div>
       </motion.div>
 
-       <motion.div 
+      <motion.div
         className="text-center"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         viewport={{ once: true, amount: 0.3 }}
-       >
-          <h2 className="text-3xl font-bold mb-4">Interesse an einer Zusammenarbeit?</h2>
-          <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">Wir sind immer auf der Suche nach neuen Herausforderungen und spannenden Projekten.</p>
-          <CtaButton asChild size="lg">
-              <Link href="/kontakt">
-                  Lassen Sie uns reden
-              </Link>
-          </CtaButton>
+      >
+        <h2 className="text-3xl font-bold mb-4">
+          Interesse an einer Zusammenarbeit?
+        </h2>
+        <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
+          Wir sind immer auf der Suche nach neuen Herausforderungen und
+          spannenden Projekten.
+        </p>
+        <CtaButton asChild size="lg">
+          <Link href="/kontakt">Lassen Sie uns reden</Link>
+        </CtaButton>
       </motion.div>
-
     </div>
   );
 }
