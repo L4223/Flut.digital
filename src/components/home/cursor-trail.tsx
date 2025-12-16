@@ -11,10 +11,28 @@ const CursorTrail = () => {
   const mousePos = useRef({ x: -100, y: -100 });
   const previousMousePos = useRef({ x: -100, y: -100 });
   const isHoveringLink = useRef(false);
+  const isMoving = useRef(false);
+  const timeoutRef = useRef<NodeJS.Timeout>();
 
   const onMouseMove = (event: MouseEvent) => {
     mousePos.current.x = event.clientX;
     mousePos.current.y = event.clientY;
+
+    isMoving.current = true;
+    if (dotRef.current) {
+      dotRef.current.style.opacity = '1';
+    }
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      isMoving.current = false;
+      if (dotRef.current) {
+        dotRef.current.style.opacity = '0';
+      }
+    }, 100);
   };
 
   const onMouseOver = (event: MouseEvent) => {
@@ -67,6 +85,9 @@ const CursorTrail = () => {
       if (requestRef.current) {
         cancelAnimationFrame(requestRef.current);
       }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
   }, []);
 
@@ -84,12 +105,13 @@ const CursorTrail = () => {
       />
       <div 
         ref={dotRef} 
-        className="fixed top-0 left-0 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none"
+        className="fixed top-0 left-0 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transition-opacity duration-300"
         style={{
             zIndex: 9999,
             width: '5px',
             height: '5px',
-            backgroundColor: 'hsl(var(--accent))'
+            backgroundColor: 'hsl(var(--accent))',
+            opacity: '0',
         }}
       />
        <style jsx global>{`
