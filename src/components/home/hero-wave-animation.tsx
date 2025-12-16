@@ -76,14 +76,14 @@ const HeroWaveAnimation = () => {
         displacedPos.setX(i, currentX + (originalX - currentX) * 0.05);
         displacedPos.setY(i, currentY + (originalY - currentY) * 0.05);
 
-
         // Mouse interaction effect
         const dx = displacedPos.getX(i) - intersectPoint.x;
         const dy = displacedPos.getY(i) - intersectPoint.z;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        const radius = 2.0; // Increased radius
-        const force = -0.3; // Decreased force
+        const dz = z - intersectPoint.y;
+        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        
+        const radius = 2.0;
+        const force = -0.3;
 
         if (dist < radius) {
             const factor = (1 - dist / radius);
