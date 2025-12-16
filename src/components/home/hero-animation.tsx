@@ -54,12 +54,14 @@ const PointCloudAnimation = () => {
             uniform float uTime;
             uniform float uScroll;
             attribute float aRandom;
+            varying float vScroll;
 
             void main() {
+                vScroll = uScroll;
                 vec4 modelPosition = modelMatrix * vec4(position, 1.0);
                 
-                // State 1: The initial wave
-                float waveY = sin(modelPosition.x * 0.2 + uTime * 0.5) * 1.5 + sin(modelPosition.z * 0.2 + uTime * 0.5) * 1.5;
+                // State 1: The initial wave (smaller amplitude)
+                float waveY = sin(modelPosition.x * 0.2 + uTime * 0.5) * 0.8 + sin(modelPosition.z * 0.2 + uTime * 0.5) * 0.8;
                 
                 // State 2: The scattered, scroll-following particles
                 float scrollOffset = uScroll * aRandom * 5.0;
@@ -80,9 +82,12 @@ const PointCloudAnimation = () => {
         fragmentShader: `
             uniform vec3 uColor;
             uniform sampler2D uTexture;
+            varying float vScroll;
             void main() {
+                // Fade out particles as user scrolls down
+                float alpha = 1.0 - vScroll * 0.7;
                 vec4 texColor = texture2D(uTexture, gl_PointCoord);
-                gl_FragColor = vec4(uColor, texColor.r);
+                gl_FragColor = vec4(uColor, texColor.r * alpha);
             }
         `,
         uniforms: {
