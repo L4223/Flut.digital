@@ -12,6 +12,7 @@ import { migrateReferencesToFirestore } from '@/config/references';
 import CookieBanner from '@/components/layout/cookie-banner';
 import { hasApiKey } from '@/lib/firebase';
 import PointCloudAnimation from '@/components/home/hero-animation';
+import CursorTrail from '@/components/home/cursor-trail';
 
 export default function RootLayout({
   children,
@@ -57,6 +58,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased flex flex-col min-h-screen">
         {isHomePage && <PointCloudAnimation />}
+        <CursorTrail />
         <Header />
         <main className="flex-grow">{children}</main>
         <Footer />
