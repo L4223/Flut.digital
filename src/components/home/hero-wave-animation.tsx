@@ -37,21 +37,13 @@ const HeroWaveAnimation = () => {
     
     const pos = waves.geometry.getAttribute('position');
     const originalPos = pos.clone();
-    const displacedPos = pos.clone();
-
-    // Plane for raycasting mouse interaction
-    const interactionPlane = new THREE.Mesh(
-      new THREE.PlaneGeometry(12, 8),
-      new THREE.MeshBasicMaterial({ visible: false })
-    );
-    interactionPlane.rotation.x = -Math.PI / 2;
-    scene.add(interactionPlane);
-
+    
     const clock = new THREE.Clock();
     const rotationSpeed = 0.1;
     
-    const mouse = new THREE.Vector2(-1, -1);
+    const mouse = new THREE.Vector2(-10, -10); // Start off-screen
     const raycaster = new THREE.Raycaster();
+    raycaster.params.Points!.threshold = 0.2; // Increase threshold to make it easier to hit points
 
     const handleMouseMove = (event: MouseEvent) => {
         const rect = renderer.domElement.getBoundingClientRect();
@@ -64,38 +56,42 @@ const HeroWaveAnimation = () => {
       animationFrameId.current = requestAnimationFrame(animate);
       const t = clock.getElapsedTime();
 
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObject(interactionPlane);
-
-      // Restore displaced positions towards original wave positions
-      for (let i = 0; i < pos.count; i++) {
-        const displacedX = displacedPos.getX(i);
-        const displacedY = displacedPos.getY(i);
-        pos.setX(i, displacedX + (originalPos.getX(i) - displacedX) * 0.1);
-        pos.setY(i, displacedY + (originalPos.getY(i) - displacedY) * 0.1);
-      }
-
-      // Calculate wave animation
+      // Calculate wave animation first
       for (let i = 0; i < pos.count; i++) {
         const originalX = originalPos.getX(i);
         const originalY = originalPos.getY(i);
-
         const noise = 0.3 * simplex.noise(originalX / 2 + t * rotationSpeed, originalY / 2 + t * rotationSpeed);
-        
-        let y = noise;
-        pos.setZ(i, y);
+        pos.setZ(i, noise);
       }
       
-      // Apply mouse interaction
+      // Then apply mouse interaction
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObject(waves);
+
+      const force = -0.3;
+      const radius = 2.0;
+
+      // Reset previous interaction effect by slowly returning to wave position
+      for (let i = 0; i < pos.count; i++) {
+        const currentX = pos.getX(i);
+        const originalX = originalPos.getX(i);
+        const currentY = pos.getY(i);
+        const originalY = originalPos.getY(i);
+        
+        pos.setX(i, currentX + (originalX - currentX) * 0.05);
+        pos.setY(i, currentY + (originalY - currentY) * 0.05);
+      }
+
+
       if (intersects.length > 0) {
         const intersectPoint = intersects[0].point;
-        const radius = 2.0;
-        const force = -0.3;
 
         for (let i = 0; i < pos.count; i++) {
-          const dx = pos.getX(i) - intersectPoint.x;
-          // The plane is rotated, so geometry's Y is world's Z
-          const dy = pos.getY(i) - intersectPoint.z; 
+          const p = new THREE.Vector3(pos.getX(i), pos.getY(i), pos.getZ(i));
+          
+          // Since the plane is rotated, we check distance on the X/Y plane of the geometry
+          const dx = p.x - intersectPoint.x;
+          const dy = p.y - intersectPoint.z; // intersect.z is the world's z, which is our geometry's y
           const dist = Math.sqrt(dx * dx + dy * dy);
           
           if (dist < radius) {
@@ -103,11 +99,11 @@ const HeroWaveAnimation = () => {
             const angle = Math.atan2(dy, dx);
             const displacement = factor * force * -0.1;
             
-            displacedPos.setX(i, pos.getX(i) + Math.cos(angle) * displacement);
-            displacedPos.setY(i, pos.getY(i) + Math.sin(angle) * displacement);
+            const newX = pos.getX(i) + Math.cos(angle) * displacement;
+            const newY = pos.getY(i) + Math.sin(angle) * displacement;
 
-            pos.setX(i, displacedPos.getX(i));
-            pos.setY(i, displacedPos.getY(i));
+            pos.setX(i, newX);
+            pos.setY(i, newY);
           }
         }
       }
@@ -141,8 +137,6 @@ const HeroWaveAnimation = () => {
       renderer.dispose();
       geometry.dispose();
       (waves.material as THREE.Material).dispose();
-      interactionPlane.geometry.dispose();
-      (interactionPlane.material as THREE.Material).dispose();
     };
   }, []);
 
