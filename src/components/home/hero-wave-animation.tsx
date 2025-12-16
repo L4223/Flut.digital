@@ -128,7 +128,7 @@ const HeroWaveAnimation = () => {
     };
   }, []);
 
-  return <div ref={mountRef} className="fixed inset-0 -z-10 opacity-70" />;
+  return <div ref={mountRef} className="absolute inset-0 -z-10 opacity-70" />;
 };
 
 export default HeroWaveAnimation;
