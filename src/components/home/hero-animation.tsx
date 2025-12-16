@@ -58,18 +58,17 @@ const PointCloudAnimation = () => {
             void main() {
                 vec4 modelPosition = modelMatrix * vec4(position, 1.0);
                 
-                // Initial Wave Position
-                float wave = sin(modelPosition.x * 0.2 + uTime * 0.5) * 1.5 + sin(modelPosition.z * 0.2 + uTime * 0.5) * 1.5;
+                // State 1: The initial wave
+                float waveY = sin(modelPosition.x * 0.2 + uTime * 0.5) * 1.5 + sin(modelPosition.z * 0.2 + uTime * 0.5) * 1.5;
                 
-                // On scroll, particles move away based on their random value and scroll progress
+                // State 2: The scattered, scroll-following particles
                 float scrollOffset = uScroll * aRandom * 5.0;
-
-                // Animate y position
-                modelPosition.y += wave * (1.0 - uScroll); // Wave fades out as we scroll
-                modelPosition.y -= scrollOffset; // Particles move down as we scroll
-
+                float scrollY = position.y - scrollOffset;
                 // Loop particles that go too far down
-                modelPosition.y = mod(modelPosition.y + 7.5, 15.0) - 7.5;
+                scrollY = mod(scrollY + 7.5, 15.0) - 7.5;
+
+                // Mix between the two states based on scroll position
+                modelPosition.y = mix(waveY, scrollY, uScroll);
                 
                 vec4 viewPosition = viewMatrix * modelPosition;
                 vec4 projectedPosition = projectionMatrix * viewPosition;
@@ -108,7 +107,7 @@ const PointCloudAnimation = () => {
 
     const handleScroll = () => {
         scrollY = window.scrollY;
-        // Normalize scroll value (0 to 1) over a certain scroll distance
+        // Normalize scroll value (0 to 1) over a certain scroll distance (e.g., 80% of viewport height)
         scrollTarget = Math.min(scrollY / (window.innerHeight * 0.8), 1.0);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -126,8 +125,8 @@ const PointCloudAnimation = () => {
       particlesMaterial.uniforms.uTime.value = elapsedTime;
       particlesMaterial.uniforms.uScroll.value = currentScroll;
 
-      // Animate camera
-      camera.position.y = -currentScroll * 5;
+      // Animate camera less aggressively
+      camera.position.y = -currentScroll * 2.0;
 
       particles.rotation.y = elapsedTime * 0.02;
       
