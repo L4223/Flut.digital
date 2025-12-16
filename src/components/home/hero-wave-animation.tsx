@@ -36,14 +36,15 @@ const HeroWaveAnimation = () => {
     scene.add(waves);
     
     const pos = waves.geometry.getAttribute('position');
-    const originalPos = pos.clone();
+    const originalPos = pos.clone(); // Store original positions
     
     const clock = new THREE.Clock();
     const rotationSpeed = 0.1;
     
     const mouse = new THREE.Vector2(-10, -10); // Start off-screen
+    const interactionPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+    const mouseWorldPos = new THREE.Vector3();
     const raycaster = new THREE.Raycaster();
-    raycaster.params.Points!.threshold = 0.2; // Increase threshold to make it easier to hit points
 
     const handleMouseMove = (event: MouseEvent) => {
         const rect = renderer.domElement.getBoundingClientRect();
@@ -56,58 +57,54 @@ const HeroWaveAnimation = () => {
       animationFrameId.current = requestAnimationFrame(animate);
       const t = clock.getElapsedTime();
 
-      // Calculate wave animation first
-      for (let i = 0; i < pos.count; i++) {
-        const originalX = originalPos.getX(i);
-        const originalY = originalPos.getY(i);
-        const noise = 0.3 * simplex.noise(originalX / 2 + t * rotationSpeed, originalY / 2 + t * rotationSpeed);
-        pos.setZ(i, noise);
-      }
-      
-      // Then apply mouse interaction
       raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObject(waves);
-
+      raycaster.ray.intersectPlane(interactionPlane, mouseWorldPos);
+      
       const force = -0.3;
       const radius = 2.0;
 
-      // Reset previous interaction effect by slowly returning to wave position
       for (let i = 0; i < pos.count; i++) {
-        const currentX = pos.getX(i);
         const originalX = originalPos.getX(i);
-        const currentY = pos.getY(i);
         const originalY = originalPos.getY(i);
         
-        pos.setX(i, currentX + (originalX - currentX) * 0.05);
-        pos.setY(i, currentY + (originalY - currentY) * 0.05);
-      }
+        // 1. Calculate wave animation
+        const waveZ = 0.3 * simplex.noise(originalX / 2 + t * rotationSpeed, originalY / 2 + t * rotationSpeed);
+        
+        const currentVec = new THREE.Vector3(pos.getX(i), pos.getY(i), pos.getZ(i));
+        const waveVec = new THREE.Vector3(originalX, originalY, waveZ);
 
+        // 2. Calculate mouse interaction
+        let displacement = new THREE.Vector3(0,0,0);
+        if(mouseWorldPos) {
+            const dx = originalX - mouseWorldPos.x;
+            const dy = originalY - mouseWorldPos.z; // Plane is rotated, so world z is plane y
+            const dist = Math.sqrt(dx * dx + dy * dy);
 
-      if (intersects.length > 0) {
-        const intersectPoint = intersects[0].point;
-
-        for (let i = 0; i < pos.count; i++) {
-          const p = new THREE.Vector3(pos.getX(i), pos.getY(i), pos.getZ(i));
-          
-          // Since the plane is rotated, we check distance on the X/Y plane of the geometry
-          const dx = p.x - intersectPoint.x;
-          const dy = p.y - intersectPoint.z; // intersect.z is the world's z, which is our geometry's y
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          
-          if (dist < radius) {
-            const factor = (1 - dist / radius);
-            const angle = Math.atan2(dy, dx);
-            const displacement = factor * force * -0.1;
-            
-            const newX = pos.getX(i) + Math.cos(angle) * displacement;
-            const newY = pos.getY(i) + Math.sin(angle) * displacement;
-
-            pos.setX(i, newX);
-            pos.setY(i, newY);
-          }
+            if (dist < radius) {
+                const angle = Math.atan2(dy, dx);
+                const factor = (1 - dist / radius);
+                const displacementAmount = factor * force;
+                
+                displacement.x = Math.cos(angle) * displacementAmount;
+                displacement.y = Math.sin(angle) * displacementAmount;
+            }
         }
-      }
+        
+        // 3. Combine wave and interaction, and smoothly return to original
+        const targetVec = new THREE.Vector3(
+          waveVec.x + displacement.x,
+          waveVec.y + displacement.y,
+          waveVec.z
+        );
 
+        // Lerp towards the target position
+        currentVec.lerp(targetVec, 0.1);
+
+        pos.setX(i, currentVec.x);
+        pos.setY(i, currentVec.y);
+        pos.setZ(i, currentVec.z);
+      }
+      
       pos.needsUpdate = true;
       
       renderer.render(scene, camera);
