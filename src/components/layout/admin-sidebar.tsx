@@ -36,12 +36,12 @@ export default function AdminSidebar({
 }: {
   children: React.ReactNode;
 }) {
-  const [user] = useAuthState(auth);
+  const [user] = useAuthState(auth!);
   const router = useRouter();
   const { toast } = useToast();
 
   const handleLogout = async () => {
-    await signOut(auth);
+    await signOut(auth!);
     toast({ title: "Abgemeldet", description: "Sie wurden erfolgreich abgemeldet." });
     router.push('/login');
   };

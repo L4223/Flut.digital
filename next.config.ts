@@ -3,10 +3,8 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   eslint: {
+    // No ESLint config is committed yet; type errors still fail the build.
     ignoreDuringBuilds: true,
   },
   images: {

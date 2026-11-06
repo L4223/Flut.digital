@@ -7,7 +7,7 @@ import { siteConfig, navItems } from "@/config/site";
 import CtaButton from "@/components/cta-button";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from "@/components/ui/sheet";
 import WaveLogo from "../icons/wave-logo";
 
 export default function Header() {
@@ -17,7 +17,8 @@ export default function Header() {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 10);
         };
-        window.addEventListener("scroll", handleScroll);
+        handleScroll();
+        window.addEventListener("scroll", handleScroll, { passive: true });
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
@@ -27,7 +28,7 @@ export default function Header() {
                 <Link
                     key={item.href}
                     href={item.href}
-                    className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                    className="py-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
                 >
                     {item.title}
                 </Link>
@@ -48,7 +49,7 @@ export default function Header() {
 
                 {/* Desktop Navigation */}
                 <div className="hidden md:flex items-center gap-14">
-                    <nav className="flex gap-6 items-center">
+                    <nav aria-label="Hauptnavigation" className="flex gap-6 items-center">
                         {navLinks}
                     </nav>
                     <CtaButton asChild size="sm">
@@ -61,23 +62,23 @@ export default function Header() {
                 <div className="md:hidden">
                     <Sheet>
                         <SheetTrigger asChild>
-                            <button className="p-2">
-                                <Menu className="h-6 w-6" />
-                                <span className="sr-only">Menü öffnen</span>
+                            <button className="p-2.5 -mr-2.5" aria-label="Menü öffnen">
+                                <Menu className="h-6 w-6" aria-hidden="true" />
                             </button>
                         </SheetTrigger>
-                        <SheetContent side="right" className="w-[300px] bg-background">
+                        <SheetContent side="right" className="w-[300px] bg-background" aria-describedby={undefined}>
+                            <SheetTitle className="sr-only">Navigation</SheetTitle>
                             <div className="p-6">
                                 <Link href="/" className="mb-8 flex items-center gap-2">
                                     <WaveLogo className="h-6 w-6 text-primary" />
                                     <span className="font-bold">{siteConfig.name}</span>
                                 </Link>
-                                <nav className="flex flex-col gap-6 mb-8">
+                                <nav aria-label="Mobile Navigation" className="flex flex-col gap-2 mb-8">
                                     {navItems.map((item) => (
                                         <SheetClose asChild key={item.href}>
                                             <Link
                                                 href={item.href}
-                                                className="text-lg font-medium hover:text-primary transition-colors"
+                                                className="py-2 text-lg font-medium hover:text-primary transition-colors"
                                             >
                                                 {item.title}
                                             </Link>

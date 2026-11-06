@@ -5,7 +5,10 @@ import CtaButton from "@/components/cta-button";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import HeroWaveAnimation from "./hero-wave-animation";
+import dynamic from "next/dynamic";
+
+// Three.js loads after the hero text, keeping it out of the critical bundle.
+const HeroWaveAnimation = dynamic(() => import("./hero-wave-animation"), { ssr: false });
 
 export default function Hero() {
     return (

@@ -1,130 +1,97 @@
-
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
+const RING_SIZE = 28;
+
+/**
+ * A soft ring that trails the native cursor. The system cursor always stays
+ * visible; the ring is only added for fine pointers without reduced motion.
+ */
 const CursorTrail = () => {
-  const dotRef = useRef<HTMLDivElement>(null);
-  const dotOutlineRef = useRef<HTMLDivElement>(null);
-  const requestRef = useRef<number>();
-
-  const mousePos = useRef({ x: -100, y: -100 });
-  const previousMousePos = useRef({ x: -100, y: -100 });
-  const isHoveringLink = useRef(false);
-  const isMoving = useRef(false);
-  const timeoutRef = useRef<NodeJS.Timeout>();
-
-  const onMouseMove = (event: MouseEvent) => {
-    mousePos.current.x = event.clientX;
-    mousePos.current.y = event.clientY;
-
-    if (!isMoving.current) {
-        isMoving.current = true;
-        if (dotRef.current) {
-            dotRef.current.style.opacity = '1';
-        }
-    }
-
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    timeoutRef.current = setTimeout(() => {
-      isMoving.current = false;
-      if (dotRef.current) {
-        dotRef.current.style.opacity = '0';
-      }
-    }, 100);
-  };
-
-  const onMouseOver = (event: MouseEvent) => {
-    const target = event.target as HTMLElement;
-    if (target.closest('a, button')) {
-      isHoveringLink.current = true;
-    }
-  };
-  
-  const onMouseOut = (event: MouseEvent) => {
-     const target = event.target as HTMLElement;
-     if (target.closest('a, button')) {
-      isHoveringLink.current = false;
-    }
-  };
+  const [enabled, setEnabled] = useState(false);
+  const ringRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseover', onMouseOver);
-    document.addEventListener('mouseout', onMouseOut);
-    
-    const animate = () => {
-      // Lerp for smooth following of the outline
-      previousMousePos.current.x += (mousePos.current.x - previousMousePos.current.x) * 0.15;
-      previousMousePos.current.y += (mousePos.current.y - previousMousePos.current.y) * 0.15;
-
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate(${mousePos.current.x}px, ${mousePos.current.y}px)`;
-      }
-      if (dotOutlineRef.current) {
-        // Apply offset to better center the cursor tip
-        const offsetX = 10.5; // Half of width, adjusted
-        const offsetY = 10.5; // Half of height, adjusted
-        dotOutlineRef.current.style.transform = `translate(${previousMousePos.current.x - offsetX}px, ${previousMousePos.current.y - offsetY}px)`;
-        
-        // Scale effect on hover
-        const scale = isHoveringLink.current ? 1.8 : 1;
-        const opacity = isHoveringLink.current ? 0.5 : 1;
-        dotOutlineRef.current.style.width = `${25 * scale}px`;
-        dotOutlineRef.current.style.height = `${25 * scale}px`;
-        dotOutlineRef.current.style.opacity = `${opacity}`;
-      }
-
-      requestRef.current = requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    return () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseover', onMouseOver);
-      document.removeEventListener('mouseout', onMouseOut);
-      if (requestRef.current) {
-        cancelAnimationFrame(requestRef.current);
-      }
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
+    const query = window.matchMedia('(pointer: fine) and (prefers-reduced-motion: no-preference)');
+    const update = () => setEnabled(query.matches);
+    update();
+    query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
   }, []);
 
+  useEffect(() => {
+    if (!enabled) return;
+
+    const target = { x: -100, y: -100 };
+    const current = { x: -100, y: -100 };
+    let scale = 1;
+    let targetScale = 1;
+    let visible = false;
+    let frameId: number | null = null;
+
+    const tick = () => {
+      current.x += (target.x - current.x) * 0.18;
+      current.y += (target.y - current.y) * 0.18;
+      scale += (targetScale - scale) * 0.2;
+      const ring = ringRef.current;
+      if (ring) {
+        ring.style.transform = `translate3d(${current.x - RING_SIZE / 2}px, ${current.y - RING_SIZE / 2}px, 0) scale(${scale})`;
+      }
+      const settled =
+        Math.abs(target.x - current.x) < 0.1 &&
+        Math.abs(target.y - current.y) < 0.1 &&
+        Math.abs(targetScale - scale) < 0.01;
+      frameId = settled ? null : requestAnimationFrame(tick);
+    };
+    const kick = () => {
+      if (frameId === null) frameId = requestAnimationFrame(tick);
+    };
+
+    const onMove = (event: PointerEvent) => {
+      if (event.pointerType !== 'mouse') return;
+      target.x = event.clientX;
+      target.y = event.clientY;
+      if (!visible && ringRef.current) {
+        visible = true;
+        current.x = target.x;
+        current.y = target.y;
+        ringRef.current.style.opacity = '1';
+      }
+      kick();
+    };
+    const onOver = (event: PointerEvent) => {
+      const interactive = (event.target as Element | null)?.closest?.('a, button, [role="button"], input, textarea, select, label');
+      targetScale = interactive ? 1.6 : 1;
+      if (ringRef.current) ringRef.current.style.borderColor = interactive ? 'hsl(var(--accent) / 0.5)' : 'hsl(var(--accent) / 0.8)';
+      kick();
+    };
+    const onLeave = () => {
+      visible = false;
+      if (ringRef.current) ringRef.current.style.opacity = '0';
+    };
+
+    document.addEventListener('pointermove', onMove, { passive: true });
+    document.addEventListener('pointerover', onOver, { passive: true });
+    document.documentElement.addEventListener('pointerleave', onLeave);
+
+    return () => {
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerover', onOver);
+      document.documentElement.removeEventListener('pointerleave', onLeave);
+      if (frameId !== null) cancelAnimationFrame(frameId);
+    };
+  }, [enabled]);
+
+  if (!enabled) return null;
+
   return (
-    <>
-      <div 
-        ref={dotOutlineRef} 
-        className="fixed top-0 left-0 rounded-full pointer-events-none transition-[width,height,opacity] duration-300"
-        style={{
-            zIndex: 9999,
-            width: '25px',
-            height: '25px',
-            border: '1.5px solid hsl(var(--accent))',
-        }}
-      />
-      <div 
-        ref={dotRef} 
-        className="fixed top-0 left-0 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transition-opacity duration-300"
-        style={{
-            zIndex: 9999,
-            width: '5px',
-            height: '5px',
-            backgroundColor: 'hsl(var(--accent))',
-            opacity: '0',
-        }}
-      />
-       <style jsx global>{`
-        *:not(input, textarea) {
-          cursor: none !important;
-        }
-      `}</style>
-    </>
+    <div
+      ref={ringRef}
+      aria-hidden="true"
+      className="pointer-events-none fixed left-0 top-0 z-[9999] rounded-full border-[1.5px] opacity-0 transition-[opacity,border-color] duration-300"
+      style={{ width: RING_SIZE, height: RING_SIZE, borderColor: 'hsl(var(--accent) / 0.8)' }}
+    />
   );
 };
 

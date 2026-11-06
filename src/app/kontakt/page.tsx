@@ -2,6 +2,16 @@ import { ContactForm } from "@/components/contact-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Calendar, Clock, Mail, MapPin } from "lucide-react";
+import type { Metadata } from "next";
+import { siteConfig } from "@/config/site";
+
+export const metadata: Metadata = {
+  title: "Kontakt",
+  description: "Projekt anfragen oder ein unverbindliches Erstgespräch vereinbaren – per Formular, E-Mail oder Telefon.",
+};
+
+const { email, phone, region, hours } = siteConfig.contact;
+const termineMailto = `mailto:${email}?subject=${encodeURIComponent("Anfrage Erstgespräch")}&body=${encodeURIComponent("Hallo,\n\nich hätte gern ein Erstgespräch. Mögliche Termine:\n\n")}`;
 
 export default function KontaktPage() {
   return (
@@ -28,20 +38,22 @@ export default function KontaktPage() {
         <div className="md:col-span-2">
             <div className="space-y-8">
                 <div>
-                    <h3 className="text-xl font-semibold mb-4">Direkter Draht</h3>
+                    <h2 className="text-xl font-semibold mb-4">Direkter Draht</h2>
                     <div className="space-y-4 text-muted-foreground">
                         <div className="flex items-start gap-4">
-                            <Mail className="h-5 w-5 mt-1 text-primary"/>
+                            <Mail className="h-5 w-5 mt-1 shrink-0 text-primary" aria-hidden="true"/>
                             <div>
-                                <h4 className="font-semibold text-foreground">Email</h4>
-                                <a href="mailto:hallo@flut.digital" className="hover:text-primary transition-colors">hallo@flut.digital</a>
+                                <h3 className="font-semibold text-foreground">E-Mail &amp; Telefon</h3>
+                                <a href={`mailto:${email}`} className="inline-block py-1 hover:text-primary transition-colors">{email}</a>
+                                <br />
+                                <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className="inline-block py-1 hover:text-primary transition-colors">{phone}</a>
                             </div>
                         </div>
                         <div className="flex items-start gap-4">
-                            <MapPin className="h-5 w-5 mt-1 text-primary"/>
+                            <MapPin className="h-5 w-5 mt-1 shrink-0 text-primary" aria-hidden="true"/>
                             <div>
-                                <h4 className="font-semibold text-foreground">Standort</h4>
-                                <p>Digital-Hub, Deutschland</p>
+                                <h3 className="font-semibold text-foreground">Standort</h3>
+                                <p>{region}</p>
                             </div>
                         </div>
                     </div>
@@ -50,21 +62,21 @@ export default function KontaktPage() {
                 <Separator />
                 
                 <div>
-                    <h3 className="text-xl font-semibold mb-4">Termin Buchen</h3>
+                    <h2 className="text-xl font-semibold mb-4">Erstgespräch vereinbaren</h2>
                     <div className="space-y-4 text-muted-foreground">
                         <div className="flex items-start gap-4">
-                            <Calendar className="h-5 w-5 mt-1 text-primary"/>
+                            <Calendar className="h-5 w-5 mt-1 shrink-0 text-primary" aria-hidden="true"/>
                             <div>
-                                <h4 className="font-semibold text-foreground">Online Kalender</h4>
-                                <p>Finden Sie einen passenden Termin für ein unverbindliches Erstgespräch.</p>
-                                <a href="#" className="text-primary font-semibold hover:underline mt-2 inline-block">Jetzt Termin vereinbaren &rarr;</a>
+                                <h3 className="font-semibold text-foreground">Unverbindliches Erstgespräch</h3>
+                                <p>Nennen Sie uns kurz Ihr Anliegen und ein paar passende Termine – wir melden uns mit einer Bestätigung.</p>
+                                <a href={termineMailto} className="text-primary font-semibold hover:underline mt-2 inline-block py-1">Termin per E-Mail anfragen &rarr;</a>
                             </div>
                         </div>
                          <div className="flex items-start gap-4">
-                            <Clock className="h-5 w-5 mt-1 text-primary"/>
+                            <Clock className="h-5 w-5 mt-1 shrink-0 text-primary" aria-hidden="true"/>
                             <div>
-                                <h4 className="font-semibold text-foreground">Verfügbarkeit</h4>
-                                <p>Montag - Freitag: 09:00 - 18:00 Uhr</p>
+                                <h3 className="font-semibold text-foreground">Verfügbarkeit</h3>
+                                <p>{hours}</p>
                             </div>
                         </div>
                     </div>

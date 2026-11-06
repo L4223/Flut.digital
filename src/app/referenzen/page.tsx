@@ -63,13 +63,14 @@ export default function ReferenzenPage() {
                 <CardHeader className="p-0 relative">
                   <div className="aspect-video overflow-hidden">
                     <Image
-                      unoptimized
+                      // Local images go through the optimizer; CMS URLs may be on any host.
+                      unoptimized={!ref.imageUrl?.startsWith("/")}
                       src={ref.imageUrl}
                       alt={ref.title}
                       width={600}
                       height={400}
                       data-ai-hint={ref.imageHint}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="w-full h-full object-cover transition-transform duration-300 motion-safe:group-hover:scale-105"
                     />
                   </div>
                   <div className="absolute top-4 right-4">

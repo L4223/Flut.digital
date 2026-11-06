@@ -44,6 +44,7 @@ export const blogPosts: BlogPost[] = [
 
 // Function to migrate local blog posts to Firestore
 export async function migrateBlogPostsToFirestore() {
+  if (!db) return;
   const postsCollection = collection(db, 'blogPosts');
   const snapshot = await getDocs(postsCollection);
   

@@ -4,9 +4,9 @@ import { BrainCircuit, Code, SwatchBook, Bot, Server, Handshake } from "lucide-r
 import { motion } from "framer-motion";
 
 const technologies = [
-  { name: "Next.js" }, { name: "React" }, { name: "Type Script" }, { name: "Node.js" },
+  { name: "Next.js" }, { name: "React" }, { name: "TypeScript" }, { name: "Node.js" },
   { name: "Python" }, { name: "Firebase" }, { name: "Docker" }, { name: "Google Cloud" },
-  { name: "Three.js" }, { name: "Tensor Flow" }
+  { name: "Three.js" }, { name: "TensorFlow" }
 ];
 
 const badgeVariants = {
@@ -35,7 +35,7 @@ export default function TechStackSection() {
           Technologien, die wir lieben
         </h2>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto mt-4">
-          Wir nutzen ein modernes, flexibles Tech-Stack, um zukunftssichere Anwendungen zu bauen.
+          Wir nutzen einen modernen, flexiblen Tech-Stack, um zukunftssichere Anwendungen zu bauen.
         </p>
       </div>
       <div className="relative">

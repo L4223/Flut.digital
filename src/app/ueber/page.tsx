@@ -64,7 +64,7 @@ export default function UeberPage() {
           className="p-8 bg-secondary/50 rounded-lg"
         >
           <Target className="w-12 h-12 mx-auto mb-4 text-primary" />
-          <h3 className="text-xl font-bold mb-2">Unsere Mission</h3>
+          <h2 className="text-xl font-bold mb-2">Unsere Mission</h2>
           <p className="text-muted-foreground">
             Innovative Lösungen entwickeln, die echten Mehrwert schaffen und
             unsere Kunden im digitalen Zeitalter voranbringen.
@@ -75,7 +75,7 @@ export default function UeberPage() {
           className="p-8 bg-secondary/50 rounded-lg"
         >
           <Zap className="w-12 h-12 mx-auto mb-4 text-primary" />
-          <h3 className="text-xl font-bold mb-2">Unsere Vision</h3>
+          <h2 className="text-xl font-bold mb-2">Unsere Vision</h2>
           <p className="text-muted-foreground">
             Die führende Agentur für anspruchsvolle digitale Transformationen zu
             sein, die für Qualität und Kreativität bekannt ist.
@@ -86,7 +86,7 @@ export default function UeberPage() {
           className="p-8 bg-secondary/50 rounded-lg"
         >
           <Check className="w-12 h-12 mx-auto mb-4 text-primary" />
-          <h3 className="text-xl font-bold mb-2">Unsere Werte</h3>
+          <h2 className="text-xl font-bold mb-2">Unsere Werte</h2>
           <p className="text-muted-foreground">
             Partnerschaft, Transparenz, Exzellenz und eine unstillbare Neugier
             treiben uns jeden Tag an.
@@ -116,8 +116,8 @@ export default function UeberPage() {
             >
               <div className="relative w-32 h-32 md:w-40 md:h-40 mx-auto mb-4">
                 <Image
-                  unoptimized
                   src={member.imageUrl}
+                  sizes="160px"
                   alt={member.name}
                   width={400}
                   height={400}
@@ -125,7 +125,7 @@ export default function UeberPage() {
                   className="rounded-full object-cover w-full h-full border-4 border-primary/50"
                 />
               </div>
-              <h4 className="text-xl font-semibold">{member.name}</h4>
+              <h3 className="text-xl font-semibold">{member.name}</h3>
               <p className="text-muted-foreground">{member.role}</p>
             </motion.div>
           ))}

@@ -15,10 +15,11 @@ type ReferenceWithId = Reference & { id: string };
 
 export default function ReferencesSection() {
     const [latestReferences, setLatestReferences] = useState<ReferenceWithId[]>([]);
+    const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
         const fetchReferences = async () => {
-            if (!db) return;
+            if (!db) { setLoaded(true); return; }
             const q = query(collection(db, "references"), orderBy("createdAt", "desc"), limit(3));
             try {
                 const querySnapshot = await getDocs(q);
@@ -43,7 +44,7 @@ export default function ReferencesSection() {
                 }
             }
         };
-        fetchReferences();
+        fetchReferences().catch(() => {}).finally(() => setLoaded(true));
     }, []);
 
     return (
@@ -77,13 +78,14 @@ export default function ReferencesSection() {
                                 <CardHeader className="p-0 relative">
                                     <div className="aspect-video overflow-hidden">
                                         <Image
-                                            unoptimized
+                                            // Local images go through the optimizer; CMS URLs may be on any host.
+                                            unoptimized={!ref.imageUrl?.startsWith("/")}
                                             src={ref.imageUrl}
                                             alt={ref.title}
                                             width={600}
                                             height={400}
                                             data-ai-hint={ref.imageHint}
-                                            className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                                            className="object-cover w-full h-full transition-transform duration-300 motion-safe:group-hover:scale-105"
                                         />
                                     </div>
                                     <div className="absolute top-4 right-4">
@@ -99,7 +101,21 @@ export default function ReferencesSection() {
                     </motion.div>
                 ))
               ) : (
-                <p className="text-muted-foreground col-span-full text-center">Aktuell werden die neusten Projekte geladen oder es sind keine Projekte vorhanden.</p>
+                loaded ? (
+                  <p className="text-muted-foreground col-span-full text-center">
+                    Hier erscheinen in Kürze unsere aktuellen Projekte.
+                  </p>
+                ) : (
+                  [0, 1, 2].map((i) => (
+                    <div key={i} aria-hidden="true" className="rounded-lg border bg-card overflow-hidden">
+                      <div className="aspect-video bg-muted/40 motion-safe:animate-pulse" />
+                      <div className="p-6 space-y-3">
+                        <div className="h-5 w-2/3 rounded bg-muted/40" />
+                        <div className="h-4 w-full rounded bg-muted/30" />
+                      </div>
+                    </div>
+                  ))
+                )
               )}
             </div>
             <div className="mt-12 text-center">

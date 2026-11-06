@@ -48,7 +48,7 @@ export default function ServicesSection() {
               variants={cardVariants}
             >
               <Link href={`/leistungen/${service.slug}`} className="group h-full flex">
-                <Card className="w-full bg-secondary/50 border-0 transition-all duration-300 hover:bg-secondary hover:-translate-y-2">
+                <Card className="w-full bg-secondary/50 border-0 transition-all duration-300 hover:bg-secondary motion-safe:hover:-translate-y-2">
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div className="p-3 bg-background rounded-lg border">

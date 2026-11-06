@@ -24,14 +24,14 @@ async function getReferenceData(slug: string): Promise<Reference | null> {
 }
 
 
-export default function ReferenceDetailPage({ params }: { params: { slug: string } }) {
+export default function ReferenceDetailPage() {
     const [reference, setReference] = useState<Reference | null>(null);
     const [loading, setLoading] = useState(true);
-    const { slug } = params;
+    const { slug } = useParams<{ slug: string }>();
 
     useEffect(() => {
         if (slug) {
-            getReferenceData(slug).then(data => {
+            getReferenceData(slug).catch(() => null).then(data => {
                 setReference(data);
                 setLoading(false);
             });
@@ -39,7 +39,7 @@ export default function ReferenceDetailPage({ params }: { params: { slug: string
     }, [slug]);
 
     if (loading) {
-        return <div className="container mx-auto px-4 py-16 md:py-24 text-center">Lade Referenz...</div>
+        return <div className="container mx-auto px-4 py-16 md:py-24 text-center text-muted-foreground" role="status">Referenz wird geladen …</div>
     }
 
     if (!reference) {
@@ -71,7 +71,8 @@ export default function ReferenceDetailPage({ params }: { params: { slug: string
                 
                 <div className="mb-12 md:mb-16">
                     <Image
-                        unoptimized
+                        // Local images go through the optimizer; CMS URLs may be on any host.
+                        unoptimized={!reference.imageUrl?.startsWith("/")}
                         src={reference.imageUrl}
                         alt={reference.title}
                         width={1200}

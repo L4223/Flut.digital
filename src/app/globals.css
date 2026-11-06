@@ -14,7 +14,7 @@
     --popover-foreground: 221 100% 96%;
 
     --primary: 212 100% 55%; /* #1C91FF */
-    --primary-foreground: 212 100% 98%;
+    --primary-foreground: 221 39% 8%; /* dark text: 5.2:1 on primary, 10:1 on accent */
 
     --secondary: 219 35% 12%; /* Darker bg */
     --secondary-foreground: 221 100% 96%;
@@ -26,7 +26,7 @@
     --accent-foreground: 221 39% 8%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 221 39% 8%;
 
     --border: 219 35% 15%;
     --input: 219 35% 15%;

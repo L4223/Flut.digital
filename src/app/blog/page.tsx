@@ -15,6 +15,7 @@ export default function BlogPage() {
 
   useEffect(() => {
     const fetchPosts = async () => {
+      if (!db) return;
       const q = query(collection(db, "blogPosts"), orderBy("date", "desc"));
       const querySnapshot = await getDocs(q);
       const postsData = querySnapshot.docs.map(doc => doc.data() as BlogPost);
@@ -62,13 +63,14 @@ export default function BlogPage() {
                 <CardHeader className="p-0">
                   <div className="aspect-video overflow-hidden">
                     <Image
-                      unoptimized
+                      // Local images go through the optimizer; CMS URLs may be on any host.
+                      unoptimized={!post.imageUrl?.startsWith("/")}
                       src={post.imageUrl}
                       alt={post.title}
                       width={800}
                       height={400}
                       data-ai-hint={post.imageHint}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="w-full h-full object-cover transition-transform duration-300 motion-safe:group-hover:scale-105"
                     />
                   </div>
                 </CardHeader>

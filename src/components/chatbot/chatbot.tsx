@@ -1,12 +1,13 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useId } from "react"
+import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
-import { Bot, CornerDownLeft, Loader, MessageSquare, Send, User, X } from "lucide-react"
+import { Bot, Loader, MessageSquare, Send, User, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 import { aiChatbotInitialPrompt } from "@/ai/flows/ai-chatbot-initial-prompt"
 import { aiChatbotAnswerQuestions } from "@/ai/flows/ai-chatbot-answer-questions"
@@ -22,18 +23,42 @@ export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const launcherRef = useRef<HTMLButtonElement>(null)
+  const dialogId = useId()
+  const titleId = useId()
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       setIsLoading(true);
-      aiChatbotInitialPrompt({}).then(response => {
-        setMessages([{ id: 1, role: "bot", text: response.greeting }])
-        setIsLoading(false);
-      });
+      aiChatbotInitialPrompt({})
+        .then(response => setMessages([{ id: 1, role: "bot", text: response.greeting }]))
+        .catch(() => setMessages([{ id: 1, role: "bot", text: "Hallo! Wie kann ich Ihnen zu unseren Leistungen weiterhelfen?" }]))
+        .finally(() => setIsLoading(false));
     }
+  }, [isOpen, messages.length]);
+
+  // Move focus into the chat when it opens; Escape closes and returns focus.
+  useEffect(() => {
+    if (!isOpen) return;
+    inputRef.current?.focus();
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeChat();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
   }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen && !isLoading) inputRef.current?.focus();
+  }, [isLoading, isOpen]);
+
+  const closeChat = () => {
+    setIsOpen(false);
+    requestAnimationFrame(() => launcherRef.current?.focus());
+  }
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -46,15 +71,16 @@ export default function Chatbot() {
   }, [messages])
 
   const handleSend = async () => {
-    if (input.trim() === "") return
-    
-    const userMessage: Message = { id: Date.now(), role: "user", text: input }
+    const question = input.trim()
+    if (question === "" || isLoading) return
+
+    const userMessage: Message = { id: Date.now(), role: "user", text: question }
     setMessages(prev => [...prev, userMessage])
     setInput("")
     setIsLoading(true)
 
     try {
-      const response = await aiChatbotAnswerQuestions({ question: input });
+      const response = await aiChatbotAnswerQuestions({ question });
       const botMessage: Message = { id: Date.now() + 1, role: "bot", text: response.answer };
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {
@@ -66,8 +92,9 @@ export default function Chatbot() {
     }
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+      e.preventDefault()
       handleSend()
     }
   }
@@ -78,17 +105,21 @@ export default function Chatbot() {
         <Tooltip>
           <TooltipTrigger asChild>
             <motion.div
-              className="fixed bottom-6 right-6 z-50"
+              className={cn("fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50", isOpen && "hidden")}
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 1, duration: 0.5, type: "spring" }}
             >
               <Button
+                ref={launcherRef}
                 size="icon"
                 className="rounded-full w-14 h-14 brand-gradient shadow-lg"
                 onClick={() => setIsOpen(true)}
+                aria-label="KI-Chat öffnen"
+                aria-expanded={isOpen}
+                aria-controls={dialogId}
               >
-                <MessageSquare className="w-6 h-6" />
+                <MessageSquare className="w-6 h-6" aria-hidden="true" />
               </Button>
             </motion.div>
           </TooltipTrigger>
@@ -105,22 +136,25 @@ export default function Chatbot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="fixed bottom-6 right-6 z-50 w-[calc(100vw-3rem)] max-w-sm h-[70vh] max-h-[600px] bg-secondary rounded-xl border shadow-2xl flex flex-col"
+            id={dialogId}
+            role="dialog"
+            aria-labelledby={titleId}
+            className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 w-[calc(100vw-2rem)] max-w-sm h-[75dvh] max-h-[600px] bg-secondary rounded-xl border shadow-2xl flex flex-col"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b">
               <div className="flex items-center gap-3">
-                <Bot className="w-6 h-6 text-primary" />
-                <h3 className="font-semibold text-lg">Flut AI Assistant</h3>
+                <Bot className="w-6 h-6 text-primary" aria-hidden="true" />
+                <h2 id={titleId} className="font-semibold text-lg">Flut KI-Assistent</h2>
               </div>
-              <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
-                <X className="w-5 h-5" />
+              <Button variant="ghost" size="icon" onClick={closeChat} aria-label="Chat schließen">
+                <X className="w-5 h-5" aria-hidden="true" />
               </Button>
             </div>
 
             {/* Chat Area */}
             <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
-              <div className="space-y-6">
+              <div className="space-y-6" role="log" aria-live="polite" aria-relevant="additions">
                 {messages.map((message) => (
                   <div
                     key={message.id}
@@ -158,7 +192,7 @@ export default function Chatbot() {
                       </Avatar>
                     <div className="max-w-[80%] rounded-xl px-4 py-3 bg-background flex items-center gap-2">
                         <Loader className="w-4 h-4 animate-spin"/>
-                        <span className="text-sm text-muted-foreground">denkt nach...</span>
+                        <span className="text-sm text-muted-foreground">denkt nach …</span>
                     </div>
                   </div>
                 )}
@@ -169,22 +203,29 @@ export default function Chatbot() {
             <div className="p-4 border-t">
               <div className="relative">
                 <Input
+                  ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Stellen Sie eine Frage..."
+                  onKeyDown={handleKeyDown}
+                  placeholder="Stellen Sie eine Frage …"
+                  aria-label="Ihre Frage an den KI-Assistenten"
                   className="pr-12 h-12"
-                  disabled={isLoading}
+                  maxLength={500}
                 />
                 <Button
                   size="icon"
-                  className="absolute top-1/2 -translate-y-1/2 right-2 w-9 h-9 brand-gradient"
+                  className="absolute top-1/2 -translate-y-1/2 right-1.5 w-10 h-10 brand-gradient"
                   onClick={handleSend}
-                  disabled={isLoading}
+                  disabled={isLoading || input.trim() === ""}
+                  aria-label="Frage senden"
                 >
-                  <Send className="w-4 h-4" />
+                  <Send className="w-4 h-4" aria-hidden="true" />
                 </Button>
               </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Antworten erzeugt Google Gemini. Bitte keine persönlichen Daten eingeben.{" "}
+                <Link href="/recht/datenschutz" className="underline underline-offset-2 hover:text-primary">Datenschutz</Link>
+              </p>
             </div>
           </motion.div>
         )}

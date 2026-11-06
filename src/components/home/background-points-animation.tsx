@@ -12,19 +12,23 @@ const BackgroundPointsAnimation = () => {
     if (typeof window === 'undefined' || !mountRef.current) return;
 
     const currentMount = mountRef.current;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const finePointer = window.matchMedia('(pointer: fine)').matches;
+    // Decorative layer at 20% opacity: 1.5x is visually identical and far cheaper.
+    const pixelRatio = Math.min(window.devicePixelRatio, 1.5);
     
     const scene = new THREE.Scene();
 
     const camera = new THREE.PerspectiveCamera(75, currentMount.clientWidth / currentMount.clientHeight, 0.1, 1000);
     camera.position.z = 5;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'low-power' });
     renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(pixelRatio);
     currentMount.appendChild(renderer.domElement);
 
     const particlesGeometry = new THREE.BufferGeometry();
-    const count = 5000;
+    const count = window.innerWidth < 768 ? 2500 : 5000;
     const positions = new Float32Array(count * 3);
 
     for(let i = 0; i < count; i++) {
@@ -56,13 +60,19 @@ const BackgroundPointsAnimation = () => {
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     };
-    window.addEventListener('mousemove', handleMouseMove);
+    if (finePointer && !reducedMotion) {
+      window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    }
     
     const clock = new THREE.Clock();
     const rotationSpeed = 0.2;
     
     const animate = () => {
       animationFrameId.current = requestAnimationFrame(animate);
+      renderFrame();
+    };
+
+    const renderFrame = () => {
       const elapsedTime = clock.getElapsedTime();
       
       particles.rotation.y = elapsedTime * 0.05 * rotationSpeed;
@@ -75,24 +85,35 @@ const BackgroundPointsAnimation = () => {
       renderer.render(scene, camera);
     };
     
-    animate();
+    const start = () => {
+      if (reducedMotion || animationFrameId.current || document.hidden) return;
+      animate();
+    };
+    const stop = () => {
+      if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
+      animationFrameId.current = undefined;
+    };
+    const handleVisibility = () => (document.hidden ? stop() : start());
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    if (reducedMotion) renderFrame();
+    else start();
 
     const handleResize = () => {
       if (currentMount) {
         camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
+        if (!animationFrameId.current) renderer.render(scene, camera);
       }
     };
     window.addEventListener('resize', handleResize);
 
     return () => {
+      stop();
+      document.removeEventListener('visibilitychange', handleVisibility);
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
       if (currentMount && renderer.domElement.parentNode === currentMount) {
         currentMount.removeChild(renderer.domElement);
       }
@@ -102,7 +123,7 @@ const BackgroundPointsAnimation = () => {
     };
   }, []);
 
-  return <div ref={mountRef} className="fixed inset-0 -z-20 opacity-20" />;
+  return <div ref={mountRef} aria-hidden="true" className="pointer-events-none fixed inset-0 -z-20 opacity-20" />;
 };
 
 export default BackgroundPointsAnimation;

@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2 } from "lucide-react";
 import CtaButton from "@/components/cta-button";
 import Link from "next/link";
+import type { Metadata } from "next";
 
 export async function generateStaticParams() {
   return services.map((service) => ({
@@ -13,13 +14,21 @@ export async function generateStaticParams() {
   }));
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+    const service = getServiceData(slug);
+    if (!service) return {};
+    return { title: { absolute: `${service.title} | Flut.digital` }, description: service.description };
+}
+
 function getServiceData(slug: string): Service | undefined {
     return services.find((service) => service.slug === slug);
 }
 
 
-export default function ServiceDetailPage({ params }: { params: { slug: string } }) {
-    const service = getServiceData(params.slug);
+export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const service = getServiceData(slug);
 
     if (!service) {
         notFound();

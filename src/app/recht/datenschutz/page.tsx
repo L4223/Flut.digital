@@ -1,55 +1,83 @@
+import type { Metadata } from "next";
+import { siteConfig } from "@/config/site";
+
+export const metadata: Metadata = {
+  title: "Datenschutz",
+};
 
 export default function DatenschutzPage() {
+  const { owner, address, email, phone } = siteConfig.contact;
+
   return (
     <div className="container mx-auto max-w-3xl px-4 py-16 md:py-24">
       <div className="prose prose-invert max-w-none prose-h1:text-4xl prose-h1:font-bold prose-h1:tracking-tighter prose-h2:font-semibold prose-a:text-primary hover:prose-a:text-accent">
         <h1>Datenschutzerklärung</h1>
-        <p>Stand: Juli 2024</p>
-        
-        <p className="p-4 rounded-md border border-destructive/50 bg-destructive/10 text-destructive-foreground/80 text-sm">
-          <strong>Wichtiger Hinweis:</strong> Dies ist eine Muster-Datenschutzerklärung. Sie muss an Ihre spezifischen Datenverarbeitungsprozesse angepasst werden. Konsultieren Sie für eine rechtssichere Erklärung einen Anwalt oder Datenschutzbeauftragten.
+        <p>Stand: November 2026</p>
+
+        <h2>1. Verantwortlicher</h2>
+        <p>
+          Verantwortlich für die Datenverarbeitung auf dieser Website ist:
+          <br />
+          <strong>{owner}</strong>, {siteConfig.name}
+          <br />
+          {address.street}, {address.postalCode} {address.city}
+          <br />
+          Telefon: {phone}
+          <br />
+          E-Mail: <a href={`mailto:${email}`}>{email}</a>
         </p>
 
-        <h2>1. Datenschutz auf einen Blick</h2>
-        <h3>Allgemeine Hinweise</h3>
+        <h2>2. Keine Tracking-Cookies, keine Analyse-Tools</h2>
         <p>
-          Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen Daten
-          passiert, wenn Sie diese Website besuchen. Personenbezogene Daten sind alle Daten, mit denen Sie
-          persönlich identifiziert werden können. Ausführliche Informationen zum Thema Datenschutz entnehmen
-          Sie unserer unter diesem Text aufgeführten Datenschutzerklärung.
-        </p>
-        
-        <h2>2. Allgemeine Hinweise und Pflicht­informationen</h2>
-        <h3>Datenschutz</h3>
-        <p>
-          Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Wir behandeln
-          Ihre personenbezogenen Daten vertraulich und entsprechend der gesetzlichen Datenschutzvorschriften
-          sowie dieser Datenschutzerklärung.
+          Diese Website setzt keine Cookies zu Analyse-, Marketing- oder Trackingzwecken und bindet keine
+          Analyse-Dienste ein. Schriftarten werden von unserem eigenen Server ausgeliefert; beim Seitenaufruf
+          wird keine Verbindung zu Google Fonts aufgebaut. Eine Einwilligung nach § 25 TDDDG ist daher nicht
+          erforderlich.
         </p>
 
-        <h3>Verantwortliche Stelle</h3>
+        <h2>3. Aufruf der Website und Server-Logfiles</h2>
         <p>
-            Die verantwortliche Stelle für die Datenverarbeitung auf dieser Website ist:<br/><br/>
-            <strong>Max Mustermann</strong><br/>
-            Musterstraße 1<br/>
-            12345 Musterstadt<br/>
-            E-Mail: hallo@flut.digital
+          Beim Aufruf dieser Website verarbeitet der Hosting-Anbieter technisch notwendige Daten wie
+          IP-Adresse, Datum und Uhrzeit, aufgerufene Seite, Referrer sowie Browser- und Betriebssystemangaben.
+          Diese Daten sind erforderlich, um die Website auszuliefern und ihre Sicherheit zu gewährleisten
+          (Art. 6 Abs. 1 lit. f DSGVO).
+        </p>
+        {/* TODO: Hosting-Anbieter (z. B. Firebase App Hosting oder Railway) mit Name, Sitz und
+            Auftragsverarbeitungsvertrag hier ergänzen. */}
+
+        <h2>4. Google Firebase (Cloud Firestore)</h2>
+        <p>
+          Inhalte wie Blogartikel und Referenzen sowie Nachrichten aus dem Kontaktformular werden in Google
+          Cloud Firestore gespeichert, einem Dienst der Google Ireland Limited, Gordon House, Barrow Street,
+          Dublin 4, Irland. Beim Laden dieser Inhalte stellt Ihr Browser eine Verbindung zu Servern von Google
+          her; dabei wird Ihre IP-Adresse übermittelt. Rechtsgrundlage ist unser berechtigtes Interesse an
+          einer zuverlässigen Bereitstellung der Website (Art. 6 Abs. 1 lit. f DSGVO). Eine Übermittlung in die
+          USA ist nicht auszuschließen; Google ist nach dem EU-US Data Privacy Framework zertifiziert.
         </p>
 
-        <h2>3. Datenerfassung auf dieser Website</h2>
-        <h3>Cookies</h3>
+        <h2>5. Kontaktformular und E-Mail</h2>
         <p>
-          Unsere Internetseiten verwenden so genannte „Cookies“. Cookies sind kleine Datenpakete und richten auf
-          Ihrem Endgerät keinen Schaden an. Sie werden entweder vorübergehend für die Dauer einer Sitzung
-          (Session-Cookies) oder dauerhaft (permanente Cookies) auf Ihrem Endgerät gespeichert.
+          Wenn Sie mir über das Kontaktformular oder per E-Mail schreiben, verarbeite ich Ihren Namen, Ihre
+          E-Mail-Adresse und Ihre Nachricht, um Ihre Anfrage zu beantworten (Art. 6 Abs. 1 lit. b DSGVO bei
+          vorvertraglichen Anfragen, sonst lit. f). Die Daten werden gelöscht, sobald die Anfrage abschließend
+          bearbeitet ist und keine gesetzlichen Aufbewahrungspflichten entgegenstehen.
         </p>
-        
-        <h3>Kontaktformular</h3>
+
+        <h2>6. KI-Chat</h2>
         <p>
-          Wenn Sie uns per Kontaktformular Anfragen zukommen lassen, werden Ihre Angaben aus dem
-          Anfrageformular inklusive der von Ihnen dort angegebenen Kontaktdaten zwecks Bearbeitung der
-          Anfrage und für den Fall von Anschlussfragen bei uns gespeichert. Diese Daten geben wir nicht ohne
-          Ihre Einwilligung weiter.
+          Der Chat auf dieser Website wird erst aktiv, wenn Sie ihn öffnen. Ihre Eingaben werden dann zur
+          Erzeugung einer Antwort an die Gemini API der Google Ireland Limited übermittelt (Art. 6 Abs. 1
+          lit. f DSGVO). Bitte geben Sie im Chat keine sensiblen oder personenbezogenen Daten ein.
+          Chatverläufe werden von mir nicht gespeichert.
+        </p>
+
+        <h2>7. Ihre Rechte</h2>
+        <p>
+          Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung,
+          Datenübertragbarkeit sowie Widerspruch gegen Verarbeitungen auf Grundlage von Art. 6 Abs. 1 lit. f
+          DSGVO (Art. 15–21 DSGVO). Wenden Sie sich dazu an <a href={`mailto:${email}`}>{email}</a>. Außerdem
+          können Sie sich bei einer Datenschutz-Aufsichtsbehörde beschweren, etwa beim Unabhängigen
+          Landeszentrum für Datenschutz Schleswig-Holstein (ULD).
         </p>
       </div>
     </div>

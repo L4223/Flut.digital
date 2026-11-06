@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast"
 import CtaButton from "./cta-button"
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import Link from "next/link";
 
 
 const formSchema = z.object({
@@ -40,6 +41,7 @@ export function ContactForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      if (!db) throw new Error("Firestore ist nicht konfiguriert.");
       await addDoc(collection(db, "contactSubmissions"), {
         ...values,
         submittedAt: serverTimestamp(),
@@ -73,7 +75,7 @@ export function ContactForm() {
               <FormItem>
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Ihr Name" {...field} />
+                  <Input placeholder="Ihr Name" autoComplete="name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -84,9 +86,9 @@ export function ContactForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>E-Mail</FormLabel>
                 <FormControl>
-                  <Input placeholder="ihre@email.de" {...field} />
+                  <Input type="email" placeholder="ihre@email.de" autoComplete="email" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -106,9 +108,18 @@ export function ContactForm() {
             </FormItem>
           )}
         />
-        <CtaButton type="submit" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? "Wird gesendet..." : "Nachricht senden"}
-        </CtaButton>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <CtaButton type="submit" disabled={form.formState.isSubmitting} className="shrink-0">
+            {form.formState.isSubmitting ? "Wird gesendet …" : "Nachricht senden"}
+          </CtaButton>
+          <p className="text-sm text-muted-foreground">
+            Ihre Angaben werden nur zur Bearbeitung Ihrer Anfrage verwendet. Details in der{" "}
+            <Link href="/recht/datenschutz" className="underline underline-offset-2 hover:text-primary">
+              Datenschutzerklärung
+            </Link>
+            .
+          </p>
+        </div>
       </form>
     </Form>
   )

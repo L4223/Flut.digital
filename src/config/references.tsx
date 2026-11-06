@@ -19,6 +19,7 @@ export const references: Reference[] = [];
 
 // Function to migrate local references to Firestore
 export async function migrateReferencesToFirestore() {
+  if (!db) return;
   if (!db || references.length === 0) return;
   const refsCollection = collection(db, 'references');
   const snapshot = await getDocs(refsCollection);

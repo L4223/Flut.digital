@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 
 export default function AuthWrapper({ children }: { children: React.ReactNode }) {
-  const [user, loading, error] = useAuthState(auth);
+  const [user, loading, error] = useAuthState(auth!); // the admin area requires a configured Firebase project
   const router = useRouter();
   const pathname = usePathname();
 

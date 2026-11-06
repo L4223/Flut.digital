@@ -1,7 +1,7 @@
 
 "use client"
 import { useEffect, useState } from 'react';
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { BlogPost } from '@/config/blog';
@@ -10,6 +10,7 @@ import { db } from '@/lib/firebase';
 import { motion } from 'framer-motion';
 
 async function getPostData(slug: string): Promise<BlogPost | null> {
+    if (!db) return null;
     const q = query(collection(db, "blogPosts"), where("slug", "==", slug));
     const querySnapshot = await getDocs(q);
     if (querySnapshot.empty) {
@@ -18,14 +19,14 @@ async function getPostData(slug: string): Promise<BlogPost | null> {
     return querySnapshot.docs[0].data() as BlogPost;
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
+export default function BlogPostPage() {
     const [post, setPost] = useState<BlogPost | null>(null);
     const [loading, setLoading] = useState(true);
-    const { slug } = params;
+    const { slug } = useParams<{ slug: string }>();
 
     useEffect(() => {
         if (slug) {
-            getPostData(slug).then(data => {
+            getPostData(slug).catch(() => null).then(data => {
                 setPost(data);
                 setLoading(false);
             });
@@ -33,7 +34,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     }, [slug]);
 
     if (loading) {
-        return <div className="container mx-auto px-4 py-16 md:py-24 text-center">Lade Beitrag...</div>
+        return <div className="container mx-auto px-4 py-16 md:py-24 text-center text-muted-foreground" role="status">Beitrag wird geladen …</div>
     }
 
     if (!post) {
@@ -57,7 +58,8 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
                 <div className="aspect-video overflow-hidden rounded-lg mb-8">
                      <Image
-                        unoptimized
+                        // Local images go through the optimizer; CMS URLs may be on any host.
+                        unoptimized={!post.imageUrl?.startsWith("/")}
                         src={post.imageUrl}
                         alt={post.title}
                         width={1200}
