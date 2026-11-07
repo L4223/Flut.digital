@@ -1,77 +1,98 @@
 "use client"
+import { useRef } from "react";
 import Link from "next/link";
-import { services } from "@/config/services";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { motion, useInView } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
+import { services, type Service } from "@/config/services";
+import { cn } from "@/lib/utils";
 import CtaButton from "../cta-button";
+import { serviceIllustrations } from "./service-illustrations";
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.1,
-      duration: 0.5,
-      ease: "easeInOut",
-    },
-  }),
+// Bento layout: two wide cards on top, three below.
+const ORDER = ["web", "ki", "3d-ar", "branding", "social"];
+const SPAN: Record<string, string> = {
+  web: "lg:col-span-3",
+  ki: "lg:col-span-3",
+  "3d-ar": "lg:col-span-2",
+  branding: "lg:col-span-2",
+  social: "md:col-span-2 lg:col-span-2",
 };
 
-export default function ServicesSection() {
+function ServiceCard({ service, index }: { service: Service; index: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  // Animations run only while the card is on screen.
+  const inView = useInView(ref, { amount: 0.4 });
+  const Illustration = serviceIllustrations[service.slug];
+
   return (
-    <motion.section 
-      initial={{ opacity: 0, y: 20 }}
+    <motion.div
+      ref={ref}
+      data-play={inView}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      viewport={{ once: true, amount: 0.2 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.5, delay: (index % 3) * 0.08, ease: "easeOut" }}
+      className={cn(
+        "group relative flex flex-col overflow-hidden rounded-2xl border bg-secondary/40 transition-colors hover:border-primary/50 has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-ring",
+        SPAN[service.slug],
+      )}
     >
-      <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tighter">
+      <div className="relative h-44 border-b bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.12),transparent_70%)] px-6 pt-4 md:h-52">
+        {Illustration && <Illustration />}
+      </div>
+      <div className="flex flex-1 flex-col p-6 md:p-8">
+        <div className="flex items-start justify-between gap-4">
+          <h3 className="text-xl font-bold md:text-2xl">
+            <Link href={`/leistungen/${service.slug}`} className="after:absolute after:inset-0 focus-visible:outline-none">
+              {service.title}
+            </Link>
+          </h3>
+          <ArrowRight
+            className="mt-1 h-5 w-5 shrink-0 text-muted-foreground transition-transform group-hover:text-primary motion-safe:group-hover:translate-x-1"
+            aria-hidden
+          />
+        </div>
+        <p className="mt-2 text-muted-foreground">{service.description}</p>
+        <ul className="mt-6 flex flex-wrap gap-2" aria-label={`Schwerpunkte ${service.title}`}>
+          {service.features.slice(0, 3).map((f) => (
+            <li key={f} className="rounded-full border bg-background/60 px-3 py-1 text-xs text-muted-foreground">{f}</li>
+          ))}
+        </ul>
+      </div>
+    </motion.div>
+  );
+}
+
+export default function ServicesSection() {
+  const ordered = ORDER.map((slug) => services.find((s) => s.slug === slug)).filter(Boolean) as Service[];
+
+  return (
+    <section aria-labelledby="kompetenzen-titel">
+      <motion.div
+        className="mx-auto mb-12 max-w-2xl text-center"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+      >
+        <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-accent">Leistungen</p>
+        <h2 id="kompetenzen-titel" className="text-3xl font-bold tracking-tighter md:text-4xl">
           Unsere Kernkompetenzen
         </h2>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mt-4">
-          Wir verwandeln komplexe Herausforderungen in elegante, digitale Lösungen.
+        <p className="mt-4 text-lg text-muted-foreground">
+          Fünf Disziplinen, ein Team – und KI als Werkzeug in jeder davon.
         </p>
+      </motion.div>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-6">
+        {ordered.map((service, i) => (
+          <ServiceCard key={service.slug} service={service} index={i} />
+        ))}
       </div>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {services.slice(0, 3).map((service, i) => {
-          const { Icon } = service;
-          return (
-            <motion.div
-              key={service.slug}
-              custom={i}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.5 }}
-              variants={cardVariants}
-            >
-              <Link href={`/leistungen/${service.slug}`} className="group h-full flex">
-                <Card className="w-full bg-secondary/50 border-0 transition-all duration-300 hover:bg-secondary motion-safe:hover:-translate-y-2">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div className="p-3 bg-background rounded-lg border">
-                        <Icon className="w-8 h-8 text-primary" />
-                      </div>
-                      <ArrowRight className="w-5 h-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:text-primary" />
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <h3 className="text-xl font-bold mb-2">{service.title}</h3>
-                    <p className="text-muted-foreground line-clamp-3">{service.description}</p>
-                  </CardContent>
-                </Card>
-              </Link>
-            </motion.div>
-          );
-        })}
+      <div className="mt-12 text-center">
+        <CtaButton variant="outline" asChild>
+          <Link href="/leistungen">Alle Leistungen ansehen</Link>
+        </CtaButton>
       </div>
-       <div className="mt-12 text-center">
-            <CtaButton variant="outline" asChild>
-                <Link href="/leistungen">Alle Leistungen ansehen</Link>
-            </CtaButton>
-        </div>
-    </motion.section>
+    </section>
   );
 }

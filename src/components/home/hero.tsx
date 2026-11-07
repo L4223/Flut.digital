@@ -26,7 +26,7 @@ export default function Hero() {
                         Digitale Lösungen,<br />die begeistern.
                     </h1>
                     <p className="max-w-xl md:max-w-2xl mx-auto text-base md:text-xl text-muted-foreground mb-10">
-                        Wir sind Ihre Digitalagentur für anspruchsvolles Webdesign, zukunftsweisende KI-Integrationen und immersive 3D/AR-Erlebnisse.
+                        Webdesign, KI-Integrationen und 3D/AR-Erlebnisse – entwickelt mit einem KI-gestützten Workflow, der schneller zu besseren Ergebnissen führt.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <CtaButton asChild size="lg" className="flex-shrink-0">

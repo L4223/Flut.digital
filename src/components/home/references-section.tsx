@@ -1,128 +1,113 @@
-
 "use client"
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import Image from "next/image";
-import { Badge } from "../ui/badge";
-import CtaButton from "../cta-button";
 import { motion } from "framer-motion";
-import { collection, getDocs, limit, query, orderBy } from "firebase/firestore";
-import { db } from "@/lib/firebase";
-import { Reference } from "@/config/references";
+import { ArrowRight } from "lucide-react";
+import CtaButton from "../cta-button";
+import DeviceMockup from "../references/device-mockup";
+import { staticReferences, type Reference } from "@/config/references";
+import { getAllReferences } from "@/lib/references";
 
-type ReferenceWithId = Reference & { id: string };
+const reveal = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.2 },
+  transition: { duration: 0.6, ease: "easeOut" },
+} as const;
 
 export default function ReferencesSection() {
-    const [latestReferences, setLatestReferences] = useState<ReferenceWithId[]>([]);
-    const [loaded, setLoaded] = useState(false);
+  // Static case studies render immediately; CMS entries are merged in afterwards.
+  const [items, setItems] = useState<Reference[]>(staticReferences);
 
-    useEffect(() => {
-        const fetchReferences = async () => {
-            if (!db) { setLoaded(true); return; }
-            const q = query(collection(db, "references"), orderBy("createdAt", "desc"), limit(3));
-            try {
-                const querySnapshot = await getDocs(q);
-                if (!querySnapshot.empty) {
-                    const refsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ReferenceWithId));
-                    setLatestReferences(refsData);
-                } else {
-                    const fallbackQuery = query(collection(db, "references"), limit(3));
-                    const fallbackSnapshot = await getDocs(fallbackQuery);
-                    if(!fallbackSnapshot.empty){
-                        const refsData = fallbackSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ReferenceWithId));
-                        setLatestReferences(refsData);
-                    }
-                }
-            } catch (error) {
-                console.error("Error fetching latest references, trying fallback:", error);
-                const fallbackQuery = query(collection(db, "references"), limit(3));
-                const fallbackSnapshot = await getDocs(fallbackQuery);
-                if(!fallbackSnapshot.empty){
-                    const refsData = fallbackSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ReferenceWithId));
-                    setLatestReferences(refsData);
-                }
-            }
-        };
-        fetchReferences().catch(() => {}).finally(() => setLoaded(true));
-    }, []);
+  useEffect(() => {
+    getAllReferences().then(setItems).catch(() => {});
+  }, []);
 
-    return (
-        <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true, amount: 0.2 }}
-        >
-            <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold tracking-tighter">
-                    Ausgewählte Projekte
-                </h2>
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto mt-4">
-                    Werfen Sie einen Blick auf unsere aktuellsten Arbeiten.
-                </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {latestReferences.length > 0 ? (
-                latestReferences.map((ref) => (
-                    <motion.div
-                        key={ref.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="h-full"
-                    >
-                        <Link href={`/referenzen/${ref.slug}`} className="group flex h-full">
-                            <Card className="overflow-hidden h-full w-full transition-all duration-300 group-hover:border-primary group-hover:shadow-2xl group-hover:shadow-primary/10">
-                                <CardHeader className="p-0 relative">
-                                    <div className="aspect-video overflow-hidden">
-                                        <Image
-                                            // Local images go through the optimizer; CMS URLs may be on any host.
-                                            unoptimized={!ref.imageUrl?.startsWith("/")}
-                                            src={ref.imageUrl}
-                                            alt={ref.title}
-                                            width={600}
-                                            height={400}
-                                            data-ai-hint={ref.imageHint}
-                                            className="object-cover w-full h-full transition-transform duration-300 motion-safe:group-hover:scale-105"
-                                        />
-                                    </div>
-                                    <div className="absolute top-4 right-4">
-                                        <Badge>{ref.category}</Badge>
-                                    </div>
-                                </CardHeader>
-                                <CardContent className="p-6">
-                                    <h3 className="text-lg font-bold truncate">{ref.title}</h3>
-                                    <p className="text-sm text-muted-foreground line-clamp-2">{ref.description}</p>
-                                </CardContent>
-                            </Card>
-                        </Link>
-                    </motion.div>
-                ))
-              ) : (
-                loaded ? (
-                  <p className="text-muted-foreground col-span-full text-center">
-                    Hier erscheinen in Kürze unsere aktuellen Projekte.
-                  </p>
-                ) : (
-                  [0, 1, 2].map((i) => (
-                    <div key={i} aria-hidden="true" className="rounded-lg border bg-card overflow-hidden">
-                      <div className="aspect-video bg-muted/40 motion-safe:animate-pulse" />
-                      <div className="p-6 space-y-3">
-                        <div className="h-5 w-2/3 rounded bg-muted/40" />
-                        <div className="h-4 w-full rounded bg-muted/30" />
-                      </div>
-                    </div>
-                  ))
-                )
-              )}
-            </div>
-            <div className="mt-12 text-center">
-                <CtaButton variant="outline" asChild>
-                    <Link href="/referenzen">Alle Projekte ansehen</Link>
-                </CtaButton>
-            </div>
-        </motion.section>
-    );
+  const [featured, ...rest] = items;
+  if (!featured) return null;
+
+  return (
+    <section aria-labelledby="referenzen-titel">
+      <motion.div {...reveal} className="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div className="max-w-2xl">
+          <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-accent">Referenzen</p>
+          <h2 id="referenzen-titel" className="text-3xl font-bold tracking-tighter md:text-4xl">
+            Projekte, die im Einsatz sind
+          </h2>
+          <p className="mt-4 text-lg text-muted-foreground">
+            Vom Dorfcafé bis zur AR-Lernplattform: ein Blick auf echte Arbeiten – mit Screenshots, Aufgabe und Lösung.
+          </p>
+        </div>
+        <Link href="/referenzen" className="group inline-flex items-center gap-2 py-2 font-semibold text-primary hover:text-accent">
+          Alle Projekte
+          <ArrowRight className="h-4 w-4 transition-transform motion-safe:group-hover:translate-x-1" aria-hidden />
+        </Link>
+      </motion.div>
+
+      {/* Featured project */}
+      <motion.article {...reveal} className="group relative grid items-center gap-8 rounded-2xl border bg-secondary/40 p-6 md:p-10 has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-ring lg:grid-cols-5 lg:gap-12">
+        <div className="lg:col-span-3">
+          <DeviceMockup
+            desktop={featured.imageUrl}
+            mobile={featured.mobileImageUrl}
+            alt={`Screenshot: ${featured.title}`}
+            label={featured.client}
+          />
+        </div>
+        <div className="lg:col-span-2">
+          <p className="text-sm font-medium text-accent">{featured.category}</p>
+          <h3 className="mt-2 text-2xl font-bold tracking-tight md:text-3xl">
+            <Link href={`/referenzen/${featured.slug}`} className="after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none">
+              {featured.title}
+            </Link>
+          </h3>
+          <p className="mt-4 text-muted-foreground">{featured.description}</p>
+          {featured.stack && (
+            <ul className="mt-6 flex flex-wrap gap-2" aria-label="Eingesetzte Technologien">
+              {featured.stack.slice(0, 4).map((t) => (
+                <li key={t} className="rounded-full border bg-background/60 px-3 py-1 text-xs text-muted-foreground">{t}</li>
+              ))}
+            </ul>
+          )}
+          <span className="mt-8 inline-flex items-center gap-2 font-semibold text-primary group-hover:text-accent" aria-hidden>
+            Case Study ansehen
+            <ArrowRight className="h-4 w-4 transition-transform motion-safe:group-hover:translate-x-1" />
+          </span>
+        </div>
+      </motion.article>
+
+      {rest.length > 0 && (
+        <div className="mt-8 grid gap-8 md:grid-cols-2">
+          {rest.slice(0, 2).map((ref, i) => (
+            <motion.article
+              key={ref.slug}
+              {...reveal}
+              transition={{ ...reveal.transition, delay: i * 0.1 }}
+              className="group relative flex flex-col rounded-2xl border bg-secondary/40 p-6 transition-colors has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-ring hover:border-primary/50"
+            >
+              <DeviceMockup
+                desktop={ref.imageUrl}
+                mobile={ref.mobileImageUrl}
+                alt={`Screenshot: ${ref.title}`}
+                sizes="(min-width: 768px) 45vw, 100vw"
+              />
+              <p className="mt-6 text-sm font-medium text-accent">{ref.category}</p>
+              <h3 className="mt-1 text-xl font-bold tracking-tight">
+                <Link href={`/referenzen/${ref.slug}`} className="after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none">
+                  {ref.title}
+                </Link>
+              </h3>
+              <p className="mt-2 line-clamp-3 text-muted-foreground">{ref.description}</p>
+            </motion.article>
+          ))}
+        </div>
+      )}
+
+      <div className="mt-12 text-center md:hidden">
+        <CtaButton variant="outline" asChild>
+          <Link href="/referenzen">Alle Projekte ansehen</Link>
+        </CtaButton>
+      </div>
+    </section>
+  );
 }
