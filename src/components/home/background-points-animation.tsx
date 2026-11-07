@@ -42,19 +42,45 @@ const BackgroundPointsAnimation = () => {
     }
     particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-    const textureLoader = new THREE.TextureLoader();
-    const particleTexture = textureLoader.load('data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="white"/></svg>'));
-
-    const particlesMaterial = new THREE.PointsMaterial({
-        color: 0x1C91FF,
-        size: 0.05,
-        map: particleTexture,
-        transparent: true,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-        opacity: isSmall ? 0.8 : 0.5
+    // Custom shader instead of PointsMaterial: with plain size attenuation the
+    // points that drift close to the camera grew into large blobs. Here the size
+    // is capped and points fade out as they come very close.
+    const particlesMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        uColor: { value: new THREE.Color().setHex(0x1c91ff, THREE.LinearSRGBColorSpace) },
+        uSize: { value: 0.05 },
+        uScale: { value: (currentMount.clientHeight * pixelRatio) / 2 },
+        uMaxSize: { value: 3 * pixelRatio },
+        uOpacity: { value: isSmall ? 0.8 : 0.5 },
+      },
+      vertexShader: /* glsl */ `
+        uniform float uSize;
+        uniform float uScale;
+        uniform float uMaxSize;
+        varying float vNearFade;
+        void main() {
+          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+          float depth = -mvPosition.z;
+          gl_PointSize = min(uSize * uScale / depth, uMaxSize);
+          vNearFade = smoothstep(0.5, 2.5, depth);
+          gl_Position = projectionMatrix * mvPosition;
+        }
+      `,
+      fragmentShader: /* glsl */ `
+        uniform vec3 uColor;
+        uniform float uOpacity;
+        varying float vNearFade;
+        void main() {
+          vec2 c = gl_PointCoord - 0.5;
+          if (dot(c, c) > 0.25) discard;
+          gl_FragColor = vec4(uColor, uOpacity * vNearFade);
+        }
+      `,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
     });
-    
+
     const particles = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particles);
 
@@ -107,6 +133,7 @@ const BackgroundPointsAnimation = () => {
         camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+        particlesMaterial.uniforms.uScale.value = (currentMount.clientHeight * pixelRatio) / 2;
         if (!animationFrameId.current) renderer.render(scene, camera);
       }
     };

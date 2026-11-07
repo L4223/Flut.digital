@@ -218,7 +218,7 @@ const HeroWaveAnimation = () => {
 
   // The mask fades the wave out at the top and bottom of the hero, so it blends
   // into the background point cloud instead of stopping at the section edge.
-  const mask = "linear-gradient(to bottom, transparent 0%, #000 22%, #000 55%, transparent 92%)";
+  const mask = "linear-gradient(to bottom, transparent 0%, #000 22%, #000 48%, transparent 66%)";
   return (
     <div
       ref={mountRef}
