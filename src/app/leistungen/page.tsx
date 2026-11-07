@@ -1,68 +1,47 @@
-
-"use client"
 import { services } from "@/config/services";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
 
 export default function LeistungenPage() {
   return (
-    <div className="container mx-auto px-8 py-16 md:py-24">
-      <motion.header 
-        className="text-center mb-12 md:mb-16"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-4">Unsere Leistungen</h1>
-        <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+    <div className="container mx-auto px-4 py-16 sm:px-8 md:py-24">
+      <header className="mb-12 text-center md:mb-16">
+        <h1 className="mb-4 text-4xl font-bold tracking-tighter md:text-5xl">Unsere Leistungen</h1>
+        <p className="mx-auto max-w-3xl text-lg text-muted-foreground md:text-xl">
           Wir bieten ein umfassendes Spektrum an digitalen Dienstleistungen, um Ihre Visionen Wirklichkeit werden zu lassen.
         </p>
-      </motion.header>
-      
-      <motion.div 
-        className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-        initial="hidden"
-        animate="visible"
-        variants={{
-          visible: {
-            transition: {
-              staggerChildren: 0.1
-            }
-          }
-        }}
-      >
+      </header>
+
+      <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {services.map((service) => {
           const { Icon } = service;
           return (
-            <motion.div
+            <li
               key={service.slug}
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
-              }}
+              className="group relative flex flex-col rounded-2xl border bg-secondary/40 p-6 transition-colors hover:border-primary/50 has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-ring md:p-8"
             >
-              <Link href={`/leistungen/${service.slug}`} className="group h-full flex">
-                <Card className="w-full h-full bg-secondary/50 border-0 transition-all duration-300 hover:bg-secondary motion-safe:hover:-translate-y-2">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div className="p-3 bg-background rounded-lg border">
-                        <Icon className="w-8 h-8 text-primary" />
-                      </div>
-                      <ArrowRight className="w-5 h-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:text-primary" />
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <h3 className="text-xl font-bold mb-2">{service.title}</h3>
-                    <p className="text-muted-foreground">{service.description}</p>
-                  </CardContent>
-                </Card>
-              </Link>
-            </motion.div>
+              <h2 className="flex items-center gap-3 text-xl font-bold">
+                <Icon className="h-6 w-6 shrink-0 text-accent" aria-hidden />
+                <Link href={`/leistungen/${service.slug}`} className="after:absolute after:inset-0 focus-visible:outline-none">
+                  {service.title}
+                </Link>
+                <ArrowRight
+                  className="ml-auto h-5 w-5 shrink-0 text-muted-foreground transition-transform group-hover:text-primary motion-safe:group-hover:translate-x-1"
+                  aria-hidden
+                />
+              </h2>
+              <p className="mt-3 text-muted-foreground">{service.description}</p>
+              <ul className="mt-6 flex flex-wrap gap-2" aria-label={`Schwerpunkte ${service.title}`}>
+                {service.features.slice(0, 3).map((f) => (
+                  <li key={f} className="rounded-full border bg-background/60 px-3 py-1 text-xs text-muted-foreground">
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            </li>
           );
         })}
-      </motion.div>
+      </ul>
     </div>
   );
 }
