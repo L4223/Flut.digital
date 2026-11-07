@@ -4,6 +4,27 @@ Website der Digitalagentur **Flut.digital** aus Schwedeneck bei Kiel. Webdesign,
 
 Die Seite enthält Leistungen, Referenzen (Case Studies), Blog, Kontaktformular, einen KI-Chat über die Groq-API und einen passwortgeschützten Admin-Bereich für Blog, Referenzen und Kontaktanfragen.
 
+![Startseite mit animierter Wellen- und Punktwolken-Szene](docs/screenshots/home.jpg)
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/leistung-ki.jpg" alt="Leistungsseite KI-Lösungen"></td>
+    <td width="50%"><img src="docs/screenshots/referenzen.jpg" alt="Referenzen mit Geräte-Mockups"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Leistungsseite mit animierter Illustration, Ablauf und FAQ</sub></td>
+    <td align="center"><sub>Case Studies mit Desktop- und Mobil-Mockups</sub></td>
+  </tr>
+</table>
+
+## Highlights
+
+- **Three.js-Hintergrund:** eine Wellen-Szene im Hero und eine Punktwolke, deren Sterne um den Mauszeiger aufleuchten. Beides mit eigenem Shader, pausiert im Hintergrund-Tab und respektiert `prefers-reduced-motion`.
+- **KI-Chat-Assistent:** beantwortet Fragen zu Leistungen und Ablauf über die Groq-API. Der Key bleibt auf dem Server (Server Actions), Rate-Limits werden freundlich abgefangen.
+- **Inhalte als Daten:** Leistungen, Referenzen und Tech-Stack liegen typisiert in `src/config/`. Die Leistungsseiten erzeugen daraus auch strukturierte Daten (JSON-LD) für Google.
+- **Admin-Bereich:** Blog-Artikel, Referenzen und Kontaktanfragen werden über Firebase Auth und Firestore gepflegt, abgesichert durch Firestore-Regeln.
+- **Barrierefreiheit & Performance:** Skip-Link, sichtbarer Tastaturfokus, geprüfte Kontraste, selbst gehostete Schrift und Inhalte, die schon vor dem Laden von JavaScript sichtbar sind.
+
 ## Tech-Stack
 
 | Bereich | Technologie |
