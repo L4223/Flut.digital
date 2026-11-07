@@ -76,10 +76,15 @@ const HeroWaveAnimation = () => {
     if (!currentMount) return;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Portrait phones see only a narrow slice of the wave, so widen the view and
+    // enlarge the points there.
+    const isPortrait = () => currentMount.clientWidth < currentMount.clientHeight;
+    const fovFor = () => (isPortrait() ? 52 : 30);
+    const pointSizeFor = () => (isPortrait() ? 0.04 : 0.02);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(30, currentMount.clientWidth / currentMount.clientHeight, 0.1, 1000);
-    camera.position.set(0, 3, 7);
+    const camera = new THREE.PerspectiveCamera(fovFor(), currentMount.clientWidth / currentMount.clientHeight, 0.1, 1000);
+    camera.position.set(0, 3, isPortrait() ? 6 : 7);
     camera.lookAt(scene.position);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' });
@@ -94,7 +99,7 @@ const HeroWaveAnimation = () => {
       uTime: { value: 0 },
       uMouse: { value: new THREE.Vector2(100, 100) },
       uMouseStrength: { value: 0 },
-      uSize: { value: 0.02 },
+      uSize: { value: pointSizeFor() },
       uScale: { value: (currentMount.clientHeight * pixelRatio) / 2 },
       // Stored without colour-space conversion: the shader writes the brand hex as-is.
       uColor: { value: new THREE.Color().setHex(0x1c91ff, THREE.LinearSRGBColorSpace) },
@@ -171,7 +176,11 @@ const HeroWaveAnimation = () => {
 
     const handleResize = () => {
       camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
+      camera.fov = fovFor();
+      camera.position.z = isPortrait() ? 6 : 7;
+      camera.lookAt(scene.position);
       camera.updateProjectionMatrix();
+      uniforms.uSize.value = pointSizeFor();
       renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
       uniforms.uScale.value = (currentMount.clientHeight * pixelRatio) / 2;
       if (frameId === null) renderer.render(scene, camera);
@@ -195,7 +204,7 @@ const HeroWaveAnimation = () => {
     };
   }, []);
 
-  return <div ref={mountRef} aria-hidden="true" className="absolute inset-0 -z-10 opacity-70" />;
+  return <div ref={mountRef} aria-hidden="true" className="absolute inset-0 -z-10 opacity-60 md:opacity-70" />;
 };
 
 export default HeroWaveAnimation;

@@ -28,7 +28,10 @@ const BackgroundPointsAnimation = () => {
     currentMount.appendChild(renderer.domElement);
 
     const particlesGeometry = new THREE.BufferGeometry();
-    const count = window.innerWidth < 768 ? 2500 : 5000;
+    const isSmall = window.innerWidth < 768;
+    // Portrait screens only see a narrow slice of the cloud, so phones keep the
+    // full count and get larger points to stay visible.
+    const count = 5000;
     const positions = new Float32Array(count * 3);
 
     for(let i = 0; i < count; i++) {
@@ -44,12 +47,12 @@ const BackgroundPointsAnimation = () => {
 
     const particlesMaterial = new THREE.PointsMaterial({
         color: 0x1C91FF,
-        size: 0.05,
+        size: isSmall ? 0.09 : 0.05,
         map: particleTexture,
         transparent: true,
         blending: THREE.AdditiveBlending,
         depthWrite: false,
-        opacity: 0.5
+        opacity: isSmall ? 0.8 : 0.5
     });
     
     const particles = new THREE.Points(particlesGeometry, particlesMaterial);
@@ -123,7 +126,7 @@ const BackgroundPointsAnimation = () => {
     };
   }, []);
 
-  return <div ref={mountRef} aria-hidden="true" className="pointer-events-none fixed inset-0 -z-20 opacity-20" />;
+  return <div ref={mountRef} aria-hidden="true" className="pointer-events-none fixed inset-0 -z-20 opacity-40 md:opacity-20" />;
 };
 
 export default BackgroundPointsAnimation;

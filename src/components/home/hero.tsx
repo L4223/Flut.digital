@@ -14,7 +14,7 @@ export default function Hero() {
     return (
         <section className="relative w-full h-[80vh] min-h-[500px] md:h-screen flex items-center justify-center text-center overflow-hidden">
             <HeroWaveAnimation />
-            <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background to-background" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/60 to-background md:from-background/30 md:via-background" />
             
             <div className="relative z-10 container px-4 md:px-6">
                 <motion.div
