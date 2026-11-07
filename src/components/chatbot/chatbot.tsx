@@ -223,7 +223,7 @@ export default function Chatbot() {
                 </Button>
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
-                Antworten erzeugt Google Gemini. Bitte keine persönlichen Daten eingeben.{" "}
+                Antworten erzeugt ein KI-Modell über Groq. Bitte keine persönlichen Daten eingeben.{" "}
                 <Link href="/recht/datenschutz" className="underline underline-offset-2 hover:text-primary">Datenschutz</Link>
               </p>
             </div>

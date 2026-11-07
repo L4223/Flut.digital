@@ -1,57 +1,46 @@
-// This file is machine-generated - edit at your own risk.
-
 'use server';
 
-/**
- * @fileOverview An AI chatbot flow that answers user questions about the company's services.
- *
- * - aiChatbotAnswerQuestions - A function that handles the chatbot answering questions process.
- * - AIChatbotAnswerQuestionsInput - The input type for the aiChatbotAnswerQuestions function.
- * - AIChatbotAnswerQuestionsOutput - The return type for the aiChatbotAnswerQuestions function.
- */
+import { groqChat } from '@/ai/groq';
+import { services } from '@/config/services';
+import { siteConfig } from '@/config/site';
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+export type AIChatbotAnswerQuestionsInput = { question: string };
+export type AIChatbotAnswerQuestionsOutput = { answer: string };
 
-const AIChatbotAnswerQuestionsInputSchema = z.object({
-  question: z.string().describe('The user question about the company\u0027s services.'),
-});
-export type AIChatbotAnswerQuestionsInput = z.infer<typeof AIChatbotAnswerQuestionsInputSchema>;
+const MAX_QUESTION_LENGTH = 500;
 
-const AIChatbotAnswerQuestionsOutputSchema = z.object({
-  answer: z.string().describe('The AI\u0027s answer to the user question.'),
-});
-export type AIChatbotAnswerQuestionsOutput = z.infer<typeof AIChatbotAnswerQuestionsOutputSchema>;
+const systemPrompt = `Du bist der freundliche KI-Assistent der Digitalagentur ${siteConfig.name} aus ${siteConfig.contact.region}.
+Antworte immer auf Deutsch, kurz und hilfreich (höchstens 4 Sätze), in der Sie-Form.
+
+Leistungen von ${siteConfig.name}:
+${services.map((s) => `- ${s.title}: ${s.description}`).join('\n')}
+
+${siteConfig.name} setzt KI gezielt im eigenen Entwicklungsprozess ein (Recherche, Prototypen, Code, Qualitätsprüfung); Entscheidungen und Abnahme liegen beim Menschen.
+Kontakt: ${siteConfig.contact.email}, ${siteConfig.contact.phone}, Kontaktformular unter /kontakt.
+
+Regeln:
+- Beantworte nur Fragen zu ${siteConfig.name}, seinen Leistungen, Projekten und Arbeitsweise.
+- Erfinde keine Preise, Termine, Kunden oder Zusagen. Verweise bei solchen Fragen auf ein persönliches Gespräch über die Kontaktdaten.
+- Bei themenfremden Fragen erkläre freundlich, dass du nur zu ${siteConfig.name} Auskunft geben kannst.`;
 
 export async function aiChatbotAnswerQuestions(input: AIChatbotAnswerQuestionsInput): Promise<AIChatbotAnswerQuestionsOutput> {
-  return aiChatbotAnswerQuestionsFlow(input);
-}
+  const question = String(input?.question ?? '').trim().slice(0, MAX_QUESTION_LENGTH);
+  if (!question) return { answer: 'Wie kann ich Ihnen helfen?' };
 
-const prompt = ai.definePrompt({
-  name: 'aiChatbotAnswerQuestionsPrompt',
-  input: {schema: AIChatbotAnswerQuestionsInputSchema},
-  output: {schema: AIChatbotAnswerQuestionsOutputSchema},
-  prompt: `You are a helpful AI chatbot for Flut.digital, a digital agency.  Use the following information to answer the user\'s question about the company\'s services.  If the question is not related to the company\'s services, respond that you are only able to answer questions about Flut.digital\'s services.
-
-Flut.digital provides the following services:
-- Web Development
-- Branding
-- 3D/AR Development
-- AI Solutions
-- Social Media Marketing
-- IT Training
-
-Question: {{{question}}}`,
-});
-
-const aiChatbotAnswerQuestionsFlow = ai.defineFlow(
-  {
-    name: 'aiChatbotAnswerQuestionsFlow',
-    inputSchema: AIChatbotAnswerQuestionsInputSchema,
-    outputSchema: AIChatbotAnswerQuestionsOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  try {
+    const answer = await groqChat([
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: question },
+    ]);
+    return { answer };
+  } catch (error) {
+    // Details stay in the server log; visitors get a helpful message instead.
+    console.error('[chat]', error);
+    const rateLimited = error instanceof Error && error.message.includes(' 429');
+    return {
+      answer: rateLimited
+        ? `Gerade erreichen mich sehr viele Fragen. Bitte versuchen Sie es in einer Minute erneut – oder schreiben Sie uns direkt an ${siteConfig.contact.email}.`
+        : `Ich kann gerade leider nicht antworten. Schreiben Sie uns gern an ${siteConfig.contact.email} oder nutzen Sie das Kontaktformular.`,
+    };
   }
-);
+}

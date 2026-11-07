@@ -65,11 +65,16 @@ export default function DatenschutzPage() {
 
         <h2>6. KI-Chat</h2>
         <p>
-          Der Chat auf dieser Website wird erst aktiv, wenn Sie ihn öffnen. Ihre Eingaben werden dann zur
-          Erzeugung einer Antwort an die Gemini API der Google Ireland Limited übermittelt (Art. 6 Abs. 1
-          lit. f DSGVO). Bitte geben Sie im Chat keine sensiblen oder personenbezogenen Daten ein.
-          Chatverläufe werden von mir nicht gespeichert.
+          Der Chat auf dieser Website sendet erst dann Daten, wenn Sie eine Frage abschicken. Der Text Ihrer
+          Frage wird von unserem Server zur Erzeugung einer Antwort an die API der Groq, Inc., Mountain View,
+          USA, übermittelt (Art. 6 Abs. 1 lit. f DSGVO). Ihre IP-Adresse wird dabei nicht an Groq
+          weitergegeben. Da Groq seinen Sitz in den USA hat, findet eine Übermittlung in ein Drittland statt.
+          Bitte geben Sie im Chat keine sensiblen oder personenbezogenen Daten ein. Chatverläufe werden von
+          uns nicht gespeichert.
         </p>
+
+        {/* TODO: Rechtsgrundlage für die Drittlandübermittlung an Groq prüfen (z. B. Data Processing
+            Addendum / EU-Standardvertragsklauseln laut groq.com/privacy) und hier ergänzen. */}
 
         <h2>7. Ihre Rechte</h2>
         <p>

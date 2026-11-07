@@ -2,7 +2,7 @@
 
 Website der Digitalagentur **Flut.digital** aus Schwedeneck bei Kiel. Webdesign, KI-Integrationen und 3D/AR-Erlebnisse.
 
-Die Seite enthält Leistungen, Referenzen (Case Studies), Blog, Kontaktformular, einen KI-Chat auf Basis von Google Gemini und einen passwortgeschützten Admin-Bereich für Blog, Referenzen und Kontaktanfragen.
+Die Seite enthält Leistungen, Referenzen (Case Studies), Blog, Kontaktformular, einen KI-Chat über die Groq-API und einen passwortgeschützten Admin-Bereich für Blog, Referenzen und Kontaktanfragen.
 
 ## Tech-Stack
 
@@ -12,7 +12,7 @@ Die Seite enthält Leistungen, Referenzen (Case Studies), Blog, Kontaktformular,
 | Styling | Tailwind CSS, shadcn/ui (Radix UI), `@tailwindcss/typography` |
 | Animation & 3D | Framer Motion, Three.js (Hero-Welle, Punktwolke im Hintergrund) |
 | Daten & Login | Firebase: Cloud Firestore und Authentication |
-| KI | [Genkit](https://genkit.dev) mit Google Gemini 2.5 Flash |
+| KI-Chat | [Groq](https://groq.com) API (Standardmodell `llama-3.3-70b-versatile`) |
 | Schrift | Inter (selbst gehostet über `@fontsource-variable/inter`) |
 
 ## Schnellstart
@@ -59,16 +59,26 @@ Nach jeder Änderung an `.env.local` muss der Dev-Server neu gestartet werden.
 
 Die Firebase-Werte tragen das Präfix `NEXT_PUBLIC_` und landen damit im Browser-Code. Das ist bei Firebase so vorgesehen und kein Geheimnis. Geschützt werden die Daten durch die **Firestore-Regeln** in `firestore.rules`: Lesen ist öffentlich, Schreiben nur für angemeldete Admins, und Kontaktanfragen kann jeder anlegen, aber nur Admins lesen.
 
-### 2. Google Gemini (KI-Chat)
+### 2. Groq (KI-Chat)
 
-1. Im [Google AI Studio](https://aistudio.google.com/app/apikey) einen API-Key erstellen.
+1. In der [Groq Console](https://console.groq.com/keys) anmelden und unter **API Keys** einen kostenlosen Key erstellen.
 2. In `.env.local` eintragen:
 
    ```env
-   GEMINI_API_KEY=dein-key
+   GROQ_API_KEY=gsk_dein-key
    ```
 
-Dieser Key ist **geheim**. Er wird nur auf dem Server genutzt (Server Actions in `src/ai/flows`), deshalb hat er **kein** `NEXT_PUBLIC_`-Präfix. Genkit akzeptiert alternativ auch `GOOGLE_API_KEY`.
+3. Optional ein anderes Modell wählen, z. B. das schnellere `llama-3.1-8b-instant`:
+
+   ```env
+   GROQ_MODEL=llama-3.1-8b-instant
+   ```
+
+   Ohne Angabe wird `llama-3.3-70b-versatile` verwendet. Die verfügbaren Modelle stehen unter [console.groq.com/docs/models](https://console.groq.com/docs/models).
+
+Dieser Key ist **geheim**. Er wird nur auf dem Server genutzt, in `src/ai/groq.ts` über Server Actions, deshalb hat er **kein** `NEXT_PUBLIC_`-Präfix und taucht nie im Browser auf.
+
+Der Free-Tier von Groq hat Anfragelimits pro Minute und pro Tag. Ist ein Limit erreicht, zeigt der Chat einen freundlichen Hinweis statt einer Antwort. Die Begrüßung im Chat ist fest hinterlegt und verbraucht kein Kontingent.
 
 ### 3. Admin-Zugang
 
@@ -79,7 +89,7 @@ Der Admin-Bereich unter `/admin` (Anmeldung über `/login`) nutzt Firebase Authe
 `.env.local` gilt nur lokal. Auf dem Server werden dieselben Variablen in der Hosting-Oberfläche gesetzt:
 
 - **Railway** (`railway.json`): Projekt → Service → **Variables** → alle Variablen aus `.env.example` anlegen und neu deployen.
-- **Firebase App Hosting** (`apphosting.yaml`): Die `NEXT_PUBLIC_…`-Werte als `env` in `apphosting.yaml` eintragen. `GEMINI_API_KEY` als Secret anlegen, mit `firebase apphosting:secrets:set GEMINI_API_KEY`, und in `apphosting.yaml` mit `secret: GEMINI_API_KEY` referenzieren.
+- **Firebase App Hosting** (`apphosting.yaml`): Die `NEXT_PUBLIC_…`-Werte als `env` in `apphosting.yaml` eintragen. `GROQ_API_KEY` als Secret anlegen, mit `firebase apphosting:secrets:set GROQ_API_KEY`, und in `apphosting.yaml` mit `secret: GROQ_API_KEY` referenzieren.
 
 Die `NEXT_PUBLIC_…`-Werte werden beim **Build** eingebettet. Nach einer Änderung muss deshalb neu gebaut werden, ein bloßer Neustart reicht nicht.
 
@@ -92,7 +102,6 @@ Die `NEXT_PUBLIC_…`-Werte werden beim **Build** eingebettet. Nach einer Änder
 | `npm run start` | Produktions-Build starten (Port 3000) |
 | `npm run typecheck` | TypeScript prüfen |
 | `npm run lint` | ESLint |
-| `npm run genkit:dev` | Genkit-Developer-UI zum Testen der KI-Flows |
 
 ## Projektstruktur
 
@@ -103,7 +112,7 @@ src/
 │   ├── blog/ kontakt/ leistungen/ referenzen/ tech/ ueber/ recht/
 │   ├── layout.tsx        Root-Layout mit Metadaten
 │   └── page.tsx          Startseite
-├── ai/                   Genkit-Konfiguration und KI-Flows für den Chat
+├── ai/                   Groq-Client (groq.ts) und Server Actions für den Chat
 ├── components/
 │   ├── home/             Startseiten-Sektionen, Hero-Welle, Punktwolke
 │   ├── references/       Geräte-Mockup für Screenshots
@@ -131,6 +140,6 @@ rm -rf node_modules .next
 npm ci
 ```
 
-**KI-Chat antwortet nicht.** Prüfen, ob `GEMINI_API_KEY` in `.env.local` gesetzt ist, und den Dev-Server neu starten.
+**KI-Chat antwortet nicht.** Prüfen, ob `GROQ_API_KEY` in `.env.local` gesetzt ist, und den Dev-Server neu starten. Im Terminal des Dev-Servers steht die genaue Fehlermeldung. `401` heißt, der Key ist ungültig, `429` heißt, das Free-Tier-Limit ist erreicht.
 
 **Blog oder Referenzen aus dem Admin erscheinen nicht.** Prüfen, ob die Firebase-Variablen gesetzt sind und die Firestore-Regeln aus `firestore.rules` im Firebase-Projekt veröffentlicht wurden.
