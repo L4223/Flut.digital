@@ -41,8 +41,17 @@ uniform float uScale;         // half the drawing-buffer height, like PointsMate
 
 ${SIMPLEX_NOISE_GLSL}
 
+varying float vFade;
+varying float vRand;
+
 void main() {
   vec3 p = position;
+  // Thin out and fade the points towards the edges of the 12 x 8 plane, so the
+  // wave dissolves instead of ending in a hard line.
+  float fadeX = smoothstep(0.0, 2.5, 6.0 - abs(position.x));
+  float fadeY = smoothstep(0.0, 3.0, 4.0 - abs(position.y));
+  vFade = fadeX * fadeY;
+  vRand = fract(sin(dot(position.xy, vec2(12.9898, 78.233))) * 43758.5453);
   float t = uTime * 0.1;
   p.z = 0.3 * snoise(vec2(p.x / 2.0 + t, p.y / 2.0 + t));
 
@@ -61,8 +70,11 @@ void main() {
 
 const fragmentShader = /* glsl */ `
 uniform vec3 uColor;
+varying float vFade;
+varying float vRand;
 void main() {
-  gl_FragColor = vec4(uColor, 1.0);
+  if (vRand > vFade) discard;
+  gl_FragColor = vec4(uColor, vFade);
 }
 `;
 
@@ -105,7 +117,7 @@ const HeroWaveAnimation = () => {
       uColor: { value: new THREE.Color().setHex(0x1c91ff, THREE.LinearSRGBColorSpace) },
     };
 
-    const material = new THREE.ShaderMaterial({ uniforms, vertexShader, fragmentShader });
+    const material = new THREE.ShaderMaterial({ uniforms, vertexShader, fragmentShader, transparent: true, depthWrite: false });
     const waves = new THREE.Points(geometry, material);
     waves.rotation.x = -Math.PI / 2;
     scene.add(waves);
@@ -204,7 +216,17 @@ const HeroWaveAnimation = () => {
     };
   }, []);
 
-  return <div ref={mountRef} aria-hidden="true" className="absolute inset-0 -z-10 opacity-60 md:opacity-70" />;
+  // The mask fades the wave out at the top and bottom of the hero, so it blends
+  // into the background point cloud instead of stopping at the section edge.
+  const mask = "linear-gradient(to bottom, transparent 0%, #000 22%, #000 55%, transparent 92%)";
+  return (
+    <div
+      ref={mountRef}
+      aria-hidden="true"
+      className="absolute inset-0 -z-10 opacity-60 md:opacity-70"
+      style={{ maskImage: mask, WebkitMaskImage: mask }}
+    />
+  );
 };
 
 export default HeroWaveAnimation;

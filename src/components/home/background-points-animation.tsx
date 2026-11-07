@@ -30,7 +30,7 @@ const BackgroundPointsAnimation = () => {
     const particlesGeometry = new THREE.BufferGeometry();
     const isSmall = window.innerWidth < 768;
     // Portrait screens only see a narrow slice of the cloud, so phones keep the
-    // full count and get larger points to stay visible.
+    // full count and slightly brighter points to stay visible.
     const count = 5000;
     const positions = new Float32Array(count * 3);
 
@@ -47,7 +47,7 @@ const BackgroundPointsAnimation = () => {
 
     const particlesMaterial = new THREE.PointsMaterial({
         color: 0x1C91FF,
-        size: isSmall ? 0.09 : 0.05,
+        size: 0.05,
         map: particleTexture,
         transparent: true,
         blending: THREE.AdditiveBlending,
