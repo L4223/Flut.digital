@@ -78,6 +78,10 @@ const BackgroundPointsAnimation = () => {
         uniform vec2 uResolution;
         varying float vNearFade;
         varying float vGlow;
+        varying float vCore;
+        // The sprite grows only to make room for the faint halo around it;
+        // the dot itself (vCore) keeps exactly its normal size.
+        const float HALO = 7.0;
         void main() {
           vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
           float depth = -mvPosition.z;
@@ -90,7 +94,9 @@ const BackgroundPointsAnimation = () => {
           vGlow = near * near * uHover * twinkle;
 
           float size = min(uSize * uScale / depth, uMaxSize);
-          gl_PointSize = size * (1.0 + 3.5 * vGlow);
+          float sprite = size * (1.0 + HALO * step(0.001, vGlow));
+          gl_PointSize = sprite;
+          vCore = size / sprite;
           vNearFade = smoothstep(0.5, 2.5, depth);
         }
       `,
@@ -100,15 +106,25 @@ const BackgroundPointsAnimation = () => {
         uniform float uOpacity;
         varying float vNearFade;
         varying float vGlow;
+        varying float vCore;
         void main() {
           vec2 c = gl_PointCoord - 0.5;
-          float d = length(c) * 2.0;
+          float d = length(c) * 2.0; // 0 at the centre, 1 at the sprite edge
           if (d > 1.0) discard;
-          // Plain points are solid discs; glowing ones get a bright core with a soft halo.
-          float halo = mix(1.0, pow(1.0 - d, 1.2), vGlow);
-          vec3 color = mix(uColor, uGlowColor, vGlow);
-          float alpha = mix(uOpacity, 1.0, vGlow) * halo * vNearFade;
-          gl_FragColor = vec4(color, alpha);
+
+          // The dot: same size as always, only brighter and lighter in colour.
+          if (d <= vCore) {
+            vec3 color = mix(uColor, uGlowColor, vGlow);
+            float alpha = mix(uOpacity, 0.95, vGlow) * vNearFade;
+            gl_FragColor = vec4(color, alpha);
+            return;
+          }
+
+          // Around it: a very faint light that fades out over a long gradient.
+          float t = (d - vCore) / (1.0 - vCore);
+          float light = pow(1.0 - t, 2.5) * 0.28 * vGlow * vNearFade;
+          if (light < 0.002) discard;
+          gl_FragColor = vec4(mix(uColor, uGlowColor, 0.5), light);
         }
       `,
       transparent: true,
