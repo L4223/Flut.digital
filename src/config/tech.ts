@@ -48,7 +48,7 @@ export const techLayers: TechLayer[] = [
     benefit: "Chatbots, automatisierte Abläufe und Auswertungen, die Ihrem Team Arbeit abnehmen.",
     icon: BrainCircuit,
     stack: [
-      { name: "Groq", what: "Sehr schnelle Ausführung offener Sprachmodelle wie Llama – z. B. für den Chat auf dieser Website." },
+      { name: "Groq", what: "Sehr schnelle Ausführung offener Sprachmodelle wie gpt-oss – z. B. für den Chat auf dieser Website." },
       { name: "Google Gemini", what: "Sprachmodelle von Google für Texte, Analysen und Assistenten." },
       { name: "OpenAI", what: "Weitere leistungsstarke Sprachmodelle – wir wählen das passende für Ihren Fall." },
       { name: "TensorFlow & PyTorch", what: "Für eigene Machine-Learning-Modelle, wenn Standard-KI nicht reicht." },

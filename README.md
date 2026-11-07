@@ -12,7 +12,7 @@ Die Seite enthält Leistungen, Referenzen (Case Studies), Blog, Kontaktformular,
 | Styling | Tailwind CSS, shadcn/ui (Radix UI), `@tailwindcss/typography` |
 | Animation & 3D | Framer Motion, Three.js (Hero-Welle, Punktwolke im Hintergrund) |
 | Daten & Login | Firebase: Cloud Firestore und Authentication |
-| KI-Chat | [Groq](https://groq.com) API (Standardmodell `llama-3.3-70b-versatile`) |
+| KI-Chat | [Groq](https://groq.com) API (Standardmodell `openai/gpt-oss-120b`) |
 | Schrift | Inter (selbst gehostet über `@fontsource-variable/inter`) |
 
 ## Schnellstart
@@ -68,13 +68,13 @@ Die Firebase-Werte tragen das Präfix `NEXT_PUBLIC_` und landen damit im Browser
    GROQ_API_KEY=gsk_dein-key
    ```
 
-3. Optional ein anderes Modell wählen, z. B. das schnellere `llama-3.1-8b-instant`:
+3. Optional ein anderes Modell wählen, z. B. das schnellere `openai/gpt-oss-20b`:
 
    ```env
-   GROQ_MODEL=llama-3.1-8b-instant
+   GROQ_MODEL=openai/gpt-oss-20b
    ```
 
-   Ohne Angabe wird `llama-3.3-70b-versatile` verwendet. Die verfügbaren Modelle stehen unter [console.groq.com/docs/models](https://console.groq.com/docs/models).
+   Ohne Angabe wird `openai/gpt-oss-120b` verwendet. Welche Modelle dein Account nutzen kann, siehst du im Playground der Groq Console. Geeignet für den Chat sind die Text-Modelle `openai/gpt-oss-120b`, `openai/gpt-oss-20b` und `qwen/qwen3.8-27b`, nicht dagegen Whisper (Sprache), Orpheus (Text-to-Speech) oder die Guard-/Safeguard-Modelle (Moderation).
 
 Dieser Key ist **geheim**. Er wird nur auf dem Server genutzt, in `src/ai/groq.ts` über Server Actions, deshalb hat er **kein** `NEXT_PUBLIC_`-Präfix und taucht nie im Browser auf.
 
