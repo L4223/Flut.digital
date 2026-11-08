@@ -1,6 +1,6 @@
 # Flut.digital
 
-Website der Digitalagentur **Flut.digital** aus Schwedeneck bei Kiel. Webdesign, KI-Integrationen und 3D/AR-Erlebnisse.
+Übungsprojekt für Webentwicklung und Brand Design: Marke und Website für **Flut.digital**, eine fiktive Digitalagentur für Webdesign, KI-Integrationen und 3D/AR-Erlebnisse. Agentur, Leistungen und Inhalte dienen als realistisches Szenario zum Üben.
 
 Die Seite enthält Leistungen, Referenzen (Case Studies), Blog, Kontaktformular, einen KI-Chat über die Groq-API und einen passwortgeschützten Admin-Bereich für Blog, Referenzen und Kontaktanfragen.
 
