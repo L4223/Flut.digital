@@ -53,8 +53,10 @@
 }
 
 @layer utilities {
+  /* No backdrop-filter: behind the header runs an animated WebGL canvas, and
+     a blur over it has to be recomputed on every frame. */
   .glass {
-    @apply backdrop-blur-lg border border-white/10 bg-black/20 shadow-lg;
+    @apply border border-white/10 bg-background/95 shadow-lg;
   }
   .brand-gradient {
     @apply bg-gradient-to-tr from-primary to-accent;

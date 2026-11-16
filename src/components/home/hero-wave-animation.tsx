@@ -43,6 +43,7 @@ ${SIMPLEX_NOISE_GLSL}
 
 varying float vFade;
 varying float vRand;
+varying float vMask;
 
 void main() {
   vec3 p = position;
@@ -65,20 +66,29 @@ void main() {
   vec4 mvPosition = modelViewMatrix * vec4(p, 1.0);
   gl_PointSize = uSize * (uScale / -mvPosition.z);
   gl_Position = projectionMatrix * mvPosition;
+
+  // Fade towards the top and bottom of the hero. Done here instead of a CSS
+  // mask-image, which made the browser re-composite the canvas every frame.
+  float v = 0.5 - 0.5 * gl_Position.y / gl_Position.w; // 0 at the top, 1 at the bottom
+  vMask = smoothstep(0.0, 0.22, v) * (1.0 - smoothstep(0.48, 0.66, v));
 }
 `;
 
 const fragmentShader = /* glsl */ `
 uniform vec3 uColor;
+uniform float uOpacity;
 varying float vFade;
 varying float vRand;
+varying float vMask;
 void main() {
-  if (vRand > vFade) discard;
-  gl_FragColor = vec4(uColor, vFade);
+  if (vRand > vFade || vMask < 0.01) discard;
+  gl_FragColor = vec4(uColor, vFade * vMask * uOpacity);
 }
 `;
 
-const MAX_PIXEL_RATIO = 2;
+// The points are 1–2 px dots: above 1.5x the extra pixels cost a lot of GPU
+// time without a visible difference.
+const MAX_PIXEL_RATIO = 1.5;
 
 const HeroWaveAnimation = () => {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -99,7 +109,7 @@ const HeroWaveAnimation = () => {
     camera.position.set(0, 3, isPortrait() ? 6 : 7);
     camera.lookAt(scene.position);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' });
+    const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'low-power' });
     const pixelRatio = Math.min(window.devicePixelRatio, MAX_PIXEL_RATIO);
     renderer.setPixelRatio(pixelRatio);
     renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
@@ -114,6 +124,8 @@ const HeroWaveAnimation = () => {
       uSize: { value: pointSizeFor() },
       uScale: { value: (currentMount.clientHeight * pixelRatio) / 2 },
       // Stored without colour-space conversion: the shader writes the brand hex as-is.
+      // Formerly CSS opacity on the wrapper, baked in to avoid an extra compositing layer.
+      uOpacity: { value: window.innerWidth >= 768 ? 0.7 : 0.6 },
       uColor: { value: new THREE.Color().setHex(0x1c91ff, THREE.LinearSRGBColorSpace) },
     };
 
@@ -195,6 +207,7 @@ const HeroWaveAnimation = () => {
       uniforms.uSize.value = pointSizeFor();
       renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
       uniforms.uScale.value = (currentMount.clientHeight * pixelRatio) / 2;
+      uniforms.uOpacity.value = window.innerWidth >= 768 ? 0.7 : 0.6;
       if (frameId === null) renderer.render(scene, camera);
     };
     window.addEventListener('resize', handleResize);
@@ -216,17 +229,8 @@ const HeroWaveAnimation = () => {
     };
   }, []);
 
-  // The mask fades the wave out at the top and bottom of the hero, so it blends
-  // into the background point cloud instead of stopping at the section edge.
-  const mask = "linear-gradient(to bottom, transparent 0%, #000 22%, #000 48%, transparent 66%)";
-  return (
-    <div
-      ref={mountRef}
-      aria-hidden="true"
-      className="absolute inset-0 -z-10 opacity-60 md:opacity-70"
-      style={{ maskImage: mask, WebkitMaskImage: mask }}
-    />
-  );
+  // The top/bottom fade and the opacity live in the shader (see vMask, uOpacity).
+  return <div ref={mountRef} aria-hidden="true" className="absolute inset-0 -z-10" />;
 };
 
 export default HeroWaveAnimation;

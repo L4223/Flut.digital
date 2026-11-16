@@ -14,8 +14,10 @@ const BackgroundPointsAnimation = () => {
     const currentMount = mountRef.current;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const finePointer = window.matchMedia('(pointer: fine)').matches;
-    // Decorative layer at 20% opacity: 1.5x is visually identical and far cheaper.
-    const pixelRatio = Math.min(window.devicePixelRatio, 1.5);
+    // Faint 1–3 px dots on a full-screen canvas that runs on every page: render
+    // at 1x. On high-DPI screens this saves more than half the GPU work with no
+    // visible difference.
+    const pixelRatio = 1;
     
     const scene = new THREE.Scene();
 
