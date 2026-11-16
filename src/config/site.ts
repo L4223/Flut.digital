@@ -8,7 +8,8 @@ export const siteConfig = {
   contact: {
     owner: "Lasse Knodt",
     email: "kontakt@flut.digital",
-    phone: "+49 (0) 151 59849866",
+    // Example number: a subscriber number starting with 0 cannot be assigned in Germany.
+    phone: "+49 (0) 431 0123456",
     address: {
       street: "Kieler Str. 9 b",
       postalCode: "24229",
