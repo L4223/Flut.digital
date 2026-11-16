@@ -61,14 +61,10 @@ export default function Chatbot() {
   }
 
   useEffect(() => {
-    if (scrollAreaRef.current) {
-        // A hack to access the underlying viewport
-        const viewport = scrollAreaRef.current.children[0] as HTMLDivElement;
-        if(viewport) {
-            viewport.scrollTop = viewport.scrollHeight;
-        }
-    }
-  }, [messages])
+    // Radix renders a <style> tag before the viewport, so look it up by its attribute.
+    const viewport = scrollAreaRef.current?.querySelector<HTMLDivElement>("[data-radix-scroll-area-viewport]");
+    if (viewport) viewport.scrollTop = viewport.scrollHeight;
+  }, [messages, isLoading])
 
   const handleSend = async () => {
     const question = input.trim()
